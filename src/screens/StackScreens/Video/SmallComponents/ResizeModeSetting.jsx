@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React, { useCallback, useMemo } from 'react'
+import React, { memo } from 'react'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import { MCIcon, MIcon } from '../../../../utils/contstant'
 import Theme from '../../../../utils/Theme'
-import { useVideoPlayer } from '../../../../contexts/VideoContext'
+import { useVideoState } from '../../../../context/VideoStateContext'
 const color = Theme.DARK
 const font = Theme.FONTS
 const resizeList =[
@@ -13,11 +13,11 @@ const resizeList =[
   "stretch",
 ]
 const ResizeModeSetting = ({setResizeVideo}) => {
-  const { VideoPlayer, setVideoPlayer } = useVideoPlayer()
+  const { videoState, setVideoState } = useVideoState()
 
   const handleGOBack= ()=>{
-    setVideoPlayer({
-      ...VideoPlayer, 
+    setVideoState({
+      ...videoState, 
       showSetting:true,
       showPlayBackRateSetting:false,
       showQualitySetting:false,
@@ -25,7 +25,7 @@ const ResizeModeSetting = ({setResizeVideo}) => {
     })
   }
 
-  return VideoPlayer.showResizeSetting &&(
+  return videoState.showResizeSetting &&(
     <View style={[styles.container]}>
       <TouchableOpacity 
       onPress={handleGOBack}
@@ -45,7 +45,7 @@ const ResizeModeSetting = ({setResizeVideo}) => {
           key={resize}
           onPress={()=>setResizeVideo(resize)}
           style={[styles.Btn,{
-            backgroundColor:VideoPlayer.resizeMode === resize?color.Orange:undefined,
+            backgroundColor:videoState.resizeMode === resize?color.Orange:undefined,
           }]}>
           <MCIcon name={"motion-play"} size={25} color={color.White}/>
           <Text style={[styles.btnText]}>{resize}</Text>
@@ -59,7 +59,7 @@ const ResizeModeSetting = ({setResizeVideo}) => {
   )
 }
 
-export default ResizeModeSetting
+export default memo(ResizeModeSetting)
 
 const styles = StyleSheet.create({
   container:{

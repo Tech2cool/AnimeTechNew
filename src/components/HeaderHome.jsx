@@ -1,92 +1,129 @@
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import {StyleSheet, Text, View} from 'react-native';
+import React, {useCallback} from 'react';
+import {useSettingControl} from '../context/SettingsControlContext';
 import Theme from '../utils/Theme';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { useLanguage } from '../contexts/LanguageContext';
-const color = Theme.DARK
-const font = Theme.FONTS
+import SelectDropdown from 'react-native-select-dropdown';
+import {MCIcon, providers} from '../utils/contstant';
+import { setAsyncData } from '../utils/HelperFunctions';
+const color = Theme.DARK;
+const font = Theme.FONTS;
+
+const languages = [
+    'en',
+    'jp',
+]
+const providerKey = 'providerControl_';
+
 const HeaderHome = () => {
-    const{currentLang, toggleLanguage} = useLanguage()
+  const {setting, setSetting} = useSettingControl();
+  const onSelectDropDown = useCallback((selectedItem, index) => {
+    setAsyncData(providerKey, selectedItem)
+    setSetting(prev => ({
+      ...prev,
+      provider: selectedItem,
+    }));
+  }, []);
+  const onSelectDropDownLanguage = useCallback((selectedItem, index) => {
+    setSetting(prev => ({
+      ...prev,
+      language: selectedItem,
+    }));
+  }, []);
+
+  const buttonTextAfterSelection = useCallback(
+    (selectedItem, index) => selectedItem,
+    [],
+  );
+  const rowTextForSelection = useCallback((item, index) => item, []);
+  const renderDropdownIcon = useCallback(
+    () => <MCIcon name={'chevron-down'} color={color.Orange} size={25} />,
+    [],
+  );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>AnT</Text>
-      <TouchableOpacity style={styles.LangBtn} onPress={()=> toggleLanguage()}>
-        <View style={currentLang ==="en"?styles.btnContainerActive:styles.btnContainer}>
-            <Text 
+    <View
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 1,
+        right: 5,
+        flexDirection:"row",
+        justifyContent:"space-between",
+      }}>
+      <SelectDropdown
+        data={providers}
+        renderDropdownIcon={renderDropdownIcon}
+        buttonStyle={styles.buttonStyle}
+        defaultButtonText="..."
+        buttonTextStyle={styles.buttonTextStyle}
+        dropdownStyle={styles.dropdownStyle}
+        rowTextStyle={styles.rowTextStyle}
+        rowStyle={styles.rowStyle}
+        selectedRowTextStyle={styles.selectedRowTextStyle}
+        selectedRowStyle={styles.selectedRowStyle}
+        defaultValue={providers?.find(item => item === setting.provider)}
+        //   defaultValueByIndex={0}
+        onSelect={onSelectDropDown}
+        buttonTextAfterSelection={buttonTextAfterSelection}
+        rowTextForSelection={rowTextForSelection}
+      />
+        <SelectDropdown
+        data={languages}
+        renderDropdownIcon={renderDropdownIcon}
+        buttonStyle={[styles.buttonStyle, {width:80, backgroundColor:"rgba(0,0,0,0.3)"}]}
+        defaultButtonText="..."
+        buttonTextStyle={styles.buttonTextStyle}
+        dropdownStyle={styles.dropdownStyle}
+        rowTextStyle={styles.rowTextStyle}
+        rowStyle={styles.rowStyle}
+        selectedRowTextStyle={styles.selectedRowTextStyle}
+        selectedRowStyle={styles.selectedRowStyle}
+        defaultValue={languages?.find(item => item === setting.language)}
+        onSelect={onSelectDropDownLanguage}
+        buttonTextAfterSelection={buttonTextAfterSelection}
+        rowTextForSelection={rowTextForSelection}
+      />
 
-            style={currentLang ==="en"?styles.LangTextActive:styles.LangText}>EN</Text>
-        </View>
-        <View style={currentLang ==="jp"?styles.btnContainerActive:styles.btnContainer}>
-            <Text 
-            style={currentLang ==="jp"?styles.LangTextActive:styles.LangText}>JP</Text>
-        </View>
-      </TouchableOpacity>
     </View>
-  )
-}
+  );
+};
 
-export default HeaderHome
+export default HeaderHome;
 
 const styles = StyleSheet.create({
-    container:{
-        width:Dimensions.get("window").width,
-        backgroundColor:"rgba(0,0,0,0.15)",
-        position:"absolute",
-        top:0,
-        left:0,
-        flexDirection:"row",
-        justifyContent:"space-between",
-        paddingHorizontal:10,
-        zIndex:10
-    },
-    title:{
-        color:color.Orange,
-        fontFamily:font.MontserratBold,
-        fontSize:20,
-        backgroundColor:"rgba(0,0,0,0.1)",
-    },
-    LangBtn:{
-        backgroundColor:"rgba(255,255,255,0.2)",
-        flexDirection:"row",
-        width:100,
-        height:45,
-        justifyContent:"space-between",
-        alignItems:"center",
-        // padding:10,
-        borderRadius:99,
-        padding:4,
-        overflow:"hidden",
-    },
-    btnContainer:{
-        height:"100%",
-        width:"50%",
-        // backgroundColor:"rgba(255,255,255,0.1)",
-        justifyContent:"center",
-        alignItems:"center",
-        // borderRadius:99,
-    },
-    btnContainerActive:{
-        height:"100%",
-        width:"50%",
-        backgroundColor:color.Orange,
-        justifyContent:"center",
-        alignItems:"center",
-        borderRadius:99,
-    },
-    LangText:{
-        fontFamily:font.RobotoBold,
-        color:color.White,
-        fontSize:20,
-        lineHeight:22,
-        textTransform:"uppercase",
-    },
-    LangTextActive:{
-        fontFamily:font.RobotoBold,
-        color:color.White,
-        fontSize:20,
-        lineHeight:22,
-        textTransform:"uppercase",
-    }
-
-})
+  rowTextStyle: {
+    fontSize: 14,
+    color: color.White,
+    textTransform: 'uppercase',
+  },
+  selectedRowTextStyle: {
+    fontSize: 14,
+    color: color.White,
+    textTransform: 'uppercase',
+  },
+  dropdownStyle: {
+    borderRadius: 5,
+    backgroundColor: color.DarkBackGround,
+    elevation: 10,
+    borderColor: color.LighterGray2,
+    borderWidth: 0.2,
+  },
+  buttonTextStyle: {
+    color: color.Orange,
+    textTransform: 'uppercase',
+    fontSize: 14,
+    fontFamily: font.OpenSansBold,
+    textAlign: 'right',
+  },
+  buttonStyle: {
+    width: 140,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    borderRadius:99,
+  },
+  rowStyle: {
+    borderColor: 'rgba(255,255,255,0.5)',
+  },
+  selectedRowStyle: {
+    backgroundColor: color.Orange,
+  },
+});

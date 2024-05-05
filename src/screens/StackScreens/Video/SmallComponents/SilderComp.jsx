@@ -1,34 +1,35 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { useVideoPlayer } from '../../../../contexts/VideoContext'
-import { Slider } from '@react-native-assets/slider';
+import {StyleSheet, Text, View} from 'react-native';
+import React, { memo } from 'react';
+import {Slider} from '@react-native-assets/slider';
 import Theme from '../../../../utils/Theme';
-const color = Theme.DARK
-const font = Theme.FONTS
+import {useVideoState} from '../../../../context/VideoStateContext';
+const color = Theme.DARK;
+const font = Theme.FONTS;
 
-const SilderComp = ({handleSliderValueChange, }) => {
-    const { VideoPlayer } = useVideoPlayer()
+const SilderComp = ({handleSliderValueChange, slideOnTap=false, props}) => {
+  const {videoState} = useVideoState();
 
-    return (
-        <View>
-            <Slider
-                style={{ marginBottom: -10}}
-                minimumValue={0}
-                value={VideoPlayer.currentTime}
-                maximumValue={VideoPlayer.duration}
-                minimumTrackTintColor={color.Orange}
-                maximumTrackTintColor={color.LightGray}
-                trackHeight={3}
-                thumbSize={0}
-                thumbTintColor={color.Orange}
-                onValueChange={handleSliderValueChange}
-                slideOnTap={false}
-            />
+  return (
+    <View>
+      <Slider
+        style={{marginBottom: -10}}
+        minimumValue={0}
+        value={videoState.currentTime}
+        maximumValue={videoState.duration}
+        minimumTrackTintColor={color.Orange}
+        maximumTrackTintColor={color.LightGray}
+        trackHeight={3}
+        thumbSize={0}
+        
+        thumbTintColor={color.Orange}
+        onValueChange={handleSliderValueChange}
+        slideOnTap={slideOnTap}
+        {...props}
+      />
+    </View>
+  );
+};
 
-        </View>
-    )
-}
+export default memo(SilderComp);
 
-export default SilderComp
-
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});

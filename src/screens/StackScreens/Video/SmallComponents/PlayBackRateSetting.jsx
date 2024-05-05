@@ -1,24 +1,24 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React, { useCallback, useMemo } from 'react'
+import React, { memo } from 'react'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import { MCIcon, MIcon } from '../../../../utils/contstant'
 import Theme from '../../../../utils/Theme'
-import { useVideoPlayer } from '../../../../contexts/VideoContext'
+import { useVideoState } from '../../../../context/VideoStateContext'
 const color = Theme.DARK
 const font = Theme.FONTS
 const rates= [0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0,5.5,6.0,6.5,7.0,7.5,8.0]
 const PlayBackRateSetting = () => {
-  const { VideoPlayer, setVideoPlayer } = useVideoPlayer()
+  const { videoState, setVideoState } = useVideoState()
 
   const handleGOBack= ()=>{
-    setVideoPlayer({
-      ...VideoPlayer, 
+    setVideoState({
+      ...videoState, 
       showSetting:true,
       showPlayBackRateSetting:false,
       showQualitySetting:false,
     })
   }
-  return VideoPlayer.showPlayBackRateSetting &&(
+  return videoState.showPlayBackRateSetting &&(
     <View style={[styles.container]}>
       <TouchableOpacity 
       onPress={handleGOBack}
@@ -36,9 +36,9 @@ const PlayBackRateSetting = () => {
         rates?.map((rate)=>(
           <TouchableOpacity 
           key={rate}
-          onPress={()=>setVideoPlayer({...VideoPlayer, playbackRate:rate})}
+          onPress={()=>setVideoState({...videoState, playbackRate:rate})}
           style={[styles.Btn,{
-            backgroundColor:VideoPlayer.playbackRate === rate?color.Orange:undefined,
+            backgroundColor:videoState.playbackRate === rate?color.Orange:undefined,
           }]}>
           <MCIcon name={"motion-play"} size={25} color={color.White}/>
           <Text style={[styles.btnText]}>{rate}x</Text>
@@ -52,7 +52,7 @@ const PlayBackRateSetting = () => {
   )
 }
 
-export default PlayBackRateSetting
+export default memo(PlayBackRateSetting)
 
 const styles = StyleSheet.create({
   container:{

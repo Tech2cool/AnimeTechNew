@@ -1,4 +1,5 @@
 export const SERVER_BASE_URL = "https://ani-short.vercel.app";
+export const SERVER_BASE_URL_V2 = "https://ani-v2.vercel.app";
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AIcon from 'react-native-vector-icons/AntDesign';
@@ -22,7 +23,7 @@ export const qualityPrefs ={
 export const sortYearItem = [
     {
         name: "All",
-        value: "",
+        value: null,
     },
     {
         name: "Year-asc",
@@ -36,7 +37,7 @@ export const sortYearItem = [
 export const subDubItem = [
     {
         name: "All",
-        value: "",
+        value: null,
     },
     {
         name: "sub",
@@ -50,7 +51,7 @@ export const subDubItem = [
 export const StatusListItem = [
     {
         name: "All",
-        value: "",
+        value: null,
     },
     {
         name: "Upcoming",
@@ -68,7 +69,7 @@ export const StatusListItem = [
 export const TypeListItem = [
     {
         name: "All",
-        value: "",
+        value: null,
     },
     {
         name: "Movie",
@@ -102,7 +103,7 @@ export const TypeListItem = [
 export const seasonListItem = [
 {
     name: "All",
-    value: "",
+    value: null,
 },
 {
     name: "fall",
@@ -227,6 +228,11 @@ export const StreamingServers = {
     BirdStream: "birdstream",
     AnimeFlix: "animeflix",
 }
+export const providers =[
+    "anitaku",
+    "aniwatch",
+    "anilist",
+]
 
 export {
     MIcon,
@@ -242,7 +248,7 @@ export {
     IIcon,
 }
 export const MoviesListItem = [
-    { name:"all",value: "" },
+    { name:"all",value: null },
     { name:"zero",value: "0" },
     { name: "a", value: "a" },
     { name:"b", value: "b" },

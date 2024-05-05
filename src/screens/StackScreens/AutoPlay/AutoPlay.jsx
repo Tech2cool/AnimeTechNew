@@ -2,14 +2,14 @@ import { StyleSheet, Text, View } from 'react-native'
 import React, { useEffect } from 'react'
 import Theme from '../../../utils/Theme';
 import { Switch, TouchableOpacity } from 'react-native-gesture-handler';
-import { useVideoPlayer } from '../../../contexts/VideoContext';
 import SelectDropdown from 'react-native-select-dropdown'
-import { getAsyncData, setAsyncData } from '../../../utils/functions';
+import { getAsyncData, setAsyncData } from '../../../utils/HelperFunctions';
 import { IIcon } from '../../../utils/contstant';
+import { useVideoState } from '../../../context/VideoStateContext';
 
 const color = Theme.DARK;
 const font = Theme.FONTS;
-const countries = [
+const autoPlay_list = [
     {
         name:"5 seconds",
         value:5,
@@ -36,47 +36,43 @@ const countries = [
     },
 ]
 const keyy = "autoPlay_key"
-const AutoPlay = () => {
-    const { VideoPlayer, setVideoPlayer } = useVideoPlayer()
+const AutoPlay = ({navigation, route}) => {
+    const { videoState, setVideoState } = useVideoState()
     const toggleSwitch = () => {
-        setVideoPlayer(prev => ({ ...prev, autoPlayNext: !VideoPlayer.autoPlayNext }));
+        setVideoState(prev => ({ ...prev, autoPlayNext: !videoState.autoPlayNext }));
         const data = {
-            autoplay: !VideoPlayer.autoPlayNext,
-            delay: VideoPlayer.autoPlayDelay,
+            autoplay: !videoState.autoPlayNext,
+            delay: videoState.autoPlayDelay,
         }
         setAsyncData(keyy, JSON.stringify(data))
     }
     const changeDelay = (delay) => {
-        setVideoPlayer(prev => ({ ...prev, autoPlayDelay: delay }));
+        setVideoState(prev => ({ ...prev, autoPlayDelay: delay }));
         const data = {
-            autoplay: VideoPlayer.autoPlayNext,
+            autoplay: videoState.autoPlayNext,
             delay: delay,
         }
         setAsyncData(keyy, JSON.stringify(data))
     }
 
     const findCurrentDelay = ()=>{
-        const resp = countries.find((item)=>parseInt(item.value) === parseInt(VideoPlayer.autoPlayDelay))
-        // console.log(resp)
-        // console.log(VideoPlayer.autoPlayDelay)
+        const resp = autoPlay_list.find((item)=>parseInt(item.value) === parseInt(videoState.autoPlayDelay))
         return resp
     }
-    // findCurrentDelay()
-    // console.log()
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.Btn}>
                 <Text style={styles.BtnText}>Auto-play next video</Text>
-                <Text style={styles.SubBtnText}>When you finish watching a video, another plays automatically in {VideoPlayer.autoPlayDelay}s.</Text>
+                <Text style={styles.SubBtnText}>When you finish watching a video, another plays automatically in {videoState.autoPlayDelay}s.</Text>
             </TouchableOpacity>
             <View style={[styles.Btn, { flexDirection: "row", justifyContent: "space-between" }]}>
                 <Text style={[styles.BtnText, { fontFamily: font.OpenSansRegular }]}>Mobile/tablet</Text>
-                <Switch value={VideoPlayer.autoPlayNext} onValueChange={toggleSwitch} />
+                <Switch value={videoState.autoPlayNext} onValueChange={toggleSwitch} />
             </View>
             <View style={{flexDirection:"row", gap:10, paddingHorizontal:10, justifyContent:"space-between"}}>
                 <Text style={styles.BtnText}>Delay:</Text>
                 <SelectDropdown
-                    data={countries}
+                    data={autoPlay_list}
                     onSelect={(selectedItem, index) => {
                         // console.log(selectedItem, index)
                         changeDelay(selectedItem.value)

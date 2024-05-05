@@ -1,60 +1,65 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, { memo } from 'react';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {MCIcon, MIcon, qualityPrefs} from '../../../../utils/contstant';
 import Theme from '../../../../utils/Theme';
-import {useVideoPlayer} from '../../../../contexts/VideoContext';
+import { useVideoState } from '../../../../context/VideoStateContext';
 const color = Theme.DARK;
 const font = Theme.FONTS;
 const SettingCard = ({setShowSettingSheet}) => {
-  const {VideoPlayer, setVideoPlayer} = useVideoPlayer();
+  const {videoState, setVideoState} = useVideoState();
 
   const handleQualityBtn = () => {
-    setVideoPlayer({
-      ...VideoPlayer,
+    setVideoState({
+      ...videoState,
       showSetting: false,
       showQualitySetting: true,
       showPlayBackRateSetting: false,
+      showSubtitleSetting:false,
     });
   };
 
   const handlePlayBackRateBtn = () => {
-    setVideoPlayer({
-      ...VideoPlayer,
+    setVideoState({
+      ...videoState,
       showSetting: false,
       showPlayBackRateSetting: true,
       showQualitySetting: false,
+      showSubtitleSetting:false,
+
     });
   };
   
   const handleResizeModeBtn = () => {
-    setVideoPlayer({
-      ...VideoPlayer,
+    setVideoState({
+      ...videoState,
       showSetting: false,
       showPlayBackRateSetting: false,
       showQualitySetting: false,
       showResizeSetting:true,
+      showSubtitleSetting:false,
+
     });
   };
   const handleSubTitleBtn = () => {
-    setVideoPlayer({
-      ...VideoPlayer,
+    setVideoState({
+      ...videoState,
       showSetting: false,
       showPlayBackRateSetting: false,
       showQualitySetting: false,
       showResizeSetting:false,
-      showSubtitle:true,
+      showSubtitleSetting:true,
     });
   };
 
 
-  return VideoPlayer.showSetting &&(
+  return videoState.showSetting &&(
       <View>
         <TouchableOpacity style={[styles.Btn, {paddingHorizontal: 20, gap: 0}]} 
         onPress={()=> {
           setShowSettingSheet(false)
-          setVideoPlayer({
-            ...VideoPlayer,
+          setVideoState({
+            ...videoState,
             showSetting: false,
             showPlayBackRateSetting: false,
             showQualitySetting: false,
@@ -91,9 +96,9 @@ const SettingCard = ({setShowSettingSheet}) => {
                     styles.btnText,
                     {color: color.Orange, fontFamily: font.OpenSansBold},
                   ]}>
-                  {VideoPlayer.quality === qualityPrefs._default
+                  {videoState.quality === qualityPrefs._default
                     ? 'Auto'
-                    : VideoPlayer.quality}
+                    : videoState.quality}
                 </Text>
                 <MIcon
                   name="arrow-forward-ios"
@@ -120,7 +125,7 @@ const SettingCard = ({setShowSettingSheet}) => {
                   styles.btnText,
                   {color: color.Orange, fontFamily: font.OpenSansBold},
                 ]}>
-                {VideoPlayer.playbackRate}x
+                {videoState.playbackRate}x
               </Text>
               <MIcon name="arrow-forward-ios" size={15} color={color.Orange} />
             </View>
@@ -142,16 +147,17 @@ const SettingCard = ({setShowSettingSheet}) => {
                   styles.btnText,
                   {color: color.Orange, fontFamily: font.OpenSansBold},
                 ]}>
-                {VideoPlayer.resizeMode}
+                {videoState.resizeMode}
               </Text>
               <MIcon name="arrow-forward-ios" size={15} color={color.Orange} />
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity
+            // disabled={true}
             style={[
               styles.Btn,
-              {flexDirection: 'row', justifyContent: 'space-between'},
+              {flexDirection: 'row', justifyContent: 'space-between',},
             ]}
             onPress={handleSubTitleBtn}>
             <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
@@ -164,7 +170,7 @@ const SettingCard = ({setShowSettingSheet}) => {
                   styles.btnText,
                   {color: color.Orange, fontFamily: font.OpenSansBold},
                 ]}>
-                {VideoPlayer.resizeMode}
+                {videoState?.selectedSubtitle.label || "none"}
               </Text>
               <MIcon name="arrow-forward-ios" size={15} color={color.Orange} />
             </View>
@@ -175,7 +181,7 @@ const SettingCard = ({setShowSettingSheet}) => {
   );
 };
 
-export default SettingCard;
+export default memo(SettingCard);
 
 const styles = StyleSheet.create({
 

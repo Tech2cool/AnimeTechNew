@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React, {useCallback, useState} from 'react';
+import React, {memo, useCallback, useState} from 'react';
 import Theme from '../../../../utils/Theme';
 import {useNavigation} from '@react-navigation/native';
 import {MCIcon} from '../../../../utils/contstant';
@@ -56,8 +56,8 @@ const VideoRelatedInfoComponent = ({
       <View style={styles.line}></View>
       {isLoading ? (
         <View style={{flexDirection:"row", justifyContent:"space-between"}}>
-          <SkeletonSlider width={'35%'} height={18} opacity={1} />
-          <SkeletonSlider width={'50%'} height={18} opacity={1} />
+          <SkeletonSlider width={'100%'} height={18} opacity={1} borderRadius={10}/>
+          {/* <SkeletonSlider width={'50%'} height={18} opacity={1} /> */}
         </View >
       ) : (
         <View style={{flexDirection: 'row'}}>
@@ -95,7 +95,7 @@ const VideoRelatedInfoComponent = ({
   );
 };
 
-export default VideoRelatedInfoComponent;
+export default memo(VideoRelatedInfoComponent);
 
 const styles = StyleSheet.create({
   line: {

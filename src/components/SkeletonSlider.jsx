@@ -6,16 +6,17 @@ const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
 import Theme from '../utils/Theme';
 const color = Theme.DARK
 
-const SkeletonSlider = ({width, height,opacity, borderRadius= undefined}) => {
+const SkeletonSlider = ({width, height,opacity, borderRadius= undefined, shimmerColors,style}) => {
   return (
     <ShimmerPlaceholder 
-        shimmerColors={[color.DarkGray,color.LighterGray, color.DarkGray]}
+        shimmerColors={shimmerColors?shimmerColors:[color.DarkGray,color.LighterGray, color.DarkGray]}
         shimmerStyle={{
             width:width, 
             height:height,
             opacity:opacity,
             borderRadius:borderRadius,
             overflow:"hidden",
+            ...style
         }}
         >
     </ShimmerPlaceholder>

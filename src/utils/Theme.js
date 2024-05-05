@@ -13,7 +13,9 @@ export default{
         Red: "red",        
         Yellow: "rgba(255, 240, 0, 1)",        
         Cyan:"#00bcd4",
-        LighterGray2: "#555555"
+        LighterGray2: "#555555",
+        LimeGreen: "rgb(0,255,0)"
+        
     },
     FONTS:{
         MontserratBold:"Montserrat-Bold",
