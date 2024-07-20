@@ -41,26 +41,6 @@ yarn add
 yarn start
 ```
 ### Demo Screeshots
-### Home 
-![AnimeTech Android Demo](./readme-utils/home.jpg "Home")
-### Video 
-![AnimeTech Android Demo](./readme-utils/video.jpg "Video")
-
-### Search 
-![AnimeTech Android Demo](./readme-utils/search.jpg "Search")
-
-### Anime Info 
-![AnimeTech Android Demo](./readme-utils/info.jpg "Info")
-
-### APP SplashScreen 
-![AnimeTech Android Demo](./readme-utils/splashScreen.jpg "Splashscreen")
-
-
-### Watchlist 
-![AnimeTech Android Demo](./readme-utils/watchlist.jpg "Watchlist")
-
-
-https://github.com/Tech2cool/animetech-files/main/home-info.gif
 ### SplashScreen 
 <div>
    <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/splash-gif.gif" height="500" width="350" align="right">
