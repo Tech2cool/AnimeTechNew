@@ -22,14 +22,14 @@ const PopularRelease = ({navigation, route}) => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    setPage(1)
+    setPage(1);
     setTimeout(() => {
       setRefreshing(false);
     }, 1500);
   }, []);
   const [page, setPage] = useState(1);
   const {data, isLoading, error} = useQuery({
-    queryKey: ['PopularRelease', page,refreshing],
+    queryKey: ['PopularRelease', page, refreshing],
     queryFn: () => fetchPopular({page: page}),
   });
   const onPressSeeAll = () => {
@@ -59,13 +59,21 @@ const PopularRelease = ({navigation, route}) => {
 
   const footerComponent = useCallback(() => {
     return (
-      <View style={{flex: 1, flexDirection: 'row', gap: 10,flexWrap: 'wrap',justifyContent:"center", alignItems:"center"}}>
+      <View
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+          gap: 10,
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
         {data?.pages?.map((pg, i) => (
           <TouchableOpacity
             onPress={() => setPage(pg?.page)}
             key={i}
             style={{
-            //   flex: 1,
+              //   flex: 1,
               paddingVertical: 10,
               paddingHorizontal: 15,
               borderRadius: 999,
@@ -76,7 +84,7 @@ const PopularRelease = ({navigation, route}) => {
               backgroundColor: pg?.page === page ? color.Orange : undefined,
             }}>
             <Text style={{fontFamily: font.OpenSansBold, color: color.White}}>
-            {pg?.name || pg?.page}
+              {pg?.name || pg?.page}
             </Text>
           </TouchableOpacity>
         ))}
@@ -84,7 +92,7 @@ const PopularRelease = ({navigation, route}) => {
     );
   }, [data?.pages]);
   if (error) {
-    Alert.alert('error', error);
+    Alert.alert('error', error?.message);
   }
   if (isLoading) {
     <ActivityIndicator
@@ -105,10 +113,12 @@ const PopularRelease = ({navigation, route}) => {
       <FlatList
         horizontal={false}
         numColumns={2}
-        data={data?.list}
+        data={data?.list?.sort((a, b) => a?.index - b?.index)}
         keyExtractor={(item, i) => `${item?.animeID || item?.animeId}`}
         renderItem={renderItem}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         ListFooterComponent={footerComponent}
         ListFooterComponentStyle={{
           paddingBottom: 30,

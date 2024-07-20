@@ -11,7 +11,13 @@ import {
 } from 'react-native';
 import React, {useCallback, useState} from 'react';
 import Theme from '../../../../utils/Theme';
-import {F6Icon, IIcon, MCIcon, MIcon, genresList} from '../../../../utils/contstant';
+import {
+  F6Icon,
+  IIcon,
+  MCIcon,
+  MIcon,
+  genresList,
+} from '../../../../utils/contstant';
 import {useQuery} from '@tanstack/react-query';
 import {searchAnime} from '../../../../Query/v1';
 import useDebounce from '../../../../components/useDebounce';
@@ -58,13 +64,22 @@ const Search = ({navigation, route}) => {
     // console.log(resp.join(""))
     return resp.join('');
   }
-  const handleSortApply = (data_list) => {
-    if (appliedFilter.sort == "Year-asc") {
-        setFilteredList(data_list ? data_list:data?.list.sort((a,b)=> parseInt(a?.year) - parseInt(b?.year)))
-    } if (appliedFilter.sort == "Year-desc") {
-        setFilteredList(data_list ? data_list:data?.list.sort((a,b)=> parseInt(b?.year) - parseInt(a?.year)))
-    }else{
-        setFilteredList([])
+  const handleSortApply = data_list => {
+    if (appliedFilter.sort == 'Year-asc') {
+      setFilteredList(
+        data_list
+          ? data_list
+          : data?.list.sort((a, b) => parseInt(a?.year) - parseInt(b?.year)),
+      );
+    }
+    if (appliedFilter.sort == 'Year-desc') {
+      setFilteredList(
+        data_list
+          ? data_list
+          : data?.list.sort((a, b) => parseInt(b?.year) - parseInt(a?.year)),
+      );
+    } else {
+      setFilteredList([]);
     }
   };
 
@@ -80,7 +95,7 @@ const Search = ({navigation, route}) => {
         subtype: appliedFilter.suborDub,
         type: appliedFilter.type,
       });
-      handleSortApply(resp?.list)
+      handleSortApply(resp?.list);
 
       return resp;
     } catch (error) {
@@ -145,7 +160,7 @@ const Search = ({navigation, route}) => {
   }, [data?.pages]);
 
   if (error) {
-    Alert.alert('error', error);
+    Alert.alert('error', error?.message);
   }
 
   return (
@@ -178,7 +193,11 @@ const Search = ({navigation, route}) => {
       <FlatList
         horizontal={false}
         numColumns={2}
-        data={filteredList.length >0?filteredList:data?.list}
+        data={
+          filteredList.length > 0
+            ? filteredList
+            : data?.list?.sort((a, b) => a?.index - b?.index)
+        }
         keyExtractor={(item, i) => `${item?.animeID || item?.animeId}`}
         renderItem={renderItem}
         ListFooterComponent={footerComponent}

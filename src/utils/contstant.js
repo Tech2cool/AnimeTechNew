@@ -231,7 +231,6 @@ export const StreamingServers = {
 export const providers =[
     "anitaku",
     "aniwatch",
-    "anilist",
 ]
 
 export {

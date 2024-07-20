@@ -12,14 +12,14 @@ import {useQuery} from '@tanstack/react-query';
 import Theme from '../../../../../utils/Theme';
 
 import VerticalCard from '../../../../../components/VerticalCard';
-import { fetchTrending } from '../../../../../Query/v1';
-import { useNavigation } from '@react-navigation/native';
+import {fetchTrending} from '../../../../../Query/v1';
+import {useNavigation} from '@react-navigation/native';
 const {width, height} = Dimensions.get('window');
 const color = Theme.DARK;
 const font = Theme.FONTS;
 const TrendingRelease = ({refreshing}) => {
   const {data, isLoading, error} = useQuery({
-    queryKey: ['trending', 1,refreshing],
+    queryKey: ['trending', 1, refreshing],
     queryFn: () => fetchTrending({page: 1}),
   });
   const navigation = useNavigation();
@@ -32,13 +32,19 @@ const TrendingRelease = ({refreshing}) => {
   const onPressSeeAll = () => {
     navigation.navigate('TrendingRelease');
   };
-  const renderItem = useCallback(({item, i}) => {
-    return (
-      <TouchableOpacity style={styles.slider} activeOpacity={0.8} onPress={()=> onPressAnime(item)}>
-        <VerticalCard item={item} />
-      </TouchableOpacity>
-    );
-  }, [refreshing,isLoading]);
+  const renderItem = useCallback(
+    ({item, i}) => {
+      return (
+        <TouchableOpacity
+          style={styles.slider}
+          activeOpacity={0.8}
+          onPress={() => onPressAnime(item)}>
+          <VerticalCard item={item} />
+        </TouchableOpacity>
+      );
+    },
+    [refreshing, isLoading],
+  );
 
   if (isLoading) {
     return (
@@ -58,7 +64,7 @@ const TrendingRelease = ({refreshing}) => {
   }
 
   if (error) {
-    Alert.alert('error', error);
+    Alert.alert('error', error?.message);
   }
 
   return (
@@ -72,12 +78,12 @@ const TrendingRelease = ({refreshing}) => {
         }}>
         <Text style={[styles.titleText, {color: color.White}]}>Top Airing</Text>
         <TouchableOpacity onPress={onPressSeeAll}>
-        <Text style={[styles.titleText]}>See all</Text>
+          <Text style={[styles.titleText]}>See all</Text>
         </TouchableOpacity>
       </View>
       <FlatList
         horizontal={true}
-        data={data?.list}
+        data={data?.list?.sort((a, b) => a?.index - b?.index)}
         keyExtractor={(item, index) => `${item.animeID}`}
         renderItem={renderItem}
         contentContainerStyle={{gap: 10}}
@@ -86,7 +92,7 @@ const TrendingRelease = ({refreshing}) => {
   );
 };
 
-export default TrendingRelease
+export default TrendingRelease;
 
 const styles = StyleSheet.create({
   container: {
@@ -94,7 +100,6 @@ const styles = StyleSheet.create({
     backgroundColor: color.DarkBackGround,
     paddingHorizontal: 5,
     paddingVertical: 5,
-
   },
   titleText: {
     fontFamily: font.OpenSansBold,

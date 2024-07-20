@@ -1,14 +1,27 @@
-import {Alert, ScrollView, Share, StyleSheet, View} from 'react-native';
-import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
+/* eslint-disable prettier/prettier */
+import {
+  Alert,
+  Linking,
+  ScrollView,
+  Share,
+  StyleSheet,
+  View,
+} from 'react-native';
+import React, {useEffect, useMemo, useState} from 'react';
 import Theme from '../../../utils/Theme';
 import VideoPlayyer from './VideoPlayerComponents/VideoPlayer';
 import {useQuery} from '@tanstack/react-query';
 import {useVideoState} from '../../../context/VideoStateContext';
-import {fetchEpisodes, fetchInfo, fetchSource} from '../../../Query/v1';
+import {
+  fetchChats,
+  fetchEpisodes,
+  fetchInfo,
+  fetchReaction,
+  fetchSource,
+} from '../../../Query/v1';
 import {SERVER_BASE_URL, qualityPrefs} from '../../../utils/contstant';
 import VideoDescComponent from './VideoInfoComponents/VideoDescComponent';
 import VideoInfoBtnsComponent from './VideoInfoComponents/VideoInfoBtnsComponent';
-import VideoEpisodesCompoent from './VideoInfoComponents/VideoEpisodesCompoent';
 import BottomSheet from '../../../components/BottomSheet';
 import SettingCard from './SmallComponents/SettingCard';
 import QualitySetting from './SmallComponents/QualitySetting';
@@ -19,14 +32,13 @@ import VideoSourcesServerComponent from './VideoInfoComponents/VideoSourcesServe
 import {scrapeStreamSB} from '../../../Query/Extractor';
 import EpisodesSheet from './SmallComponents/EpisodesSheet';
 import {useNavigation} from '@react-navigation/native';
-import {
-  createTable,
-  getDBConnection,
-  saveVideoRecord,
-} from '../../../config/db';
+import {getDBConnection, saveVideoRecord} from '../../../config/db';
 import {useSettingControl} from '../../../context/SettingsControlContext';
 import NetInfo from '@react-native-community/netinfo';
-import { BASE_URL } from '../../../config/config';
+import {BASE_URL} from '../../../config/config';
+import VideoChatsComponent from './VideoInfoComponents/VideoChatsComponent';
+import VideoAllComments from './VideoInfoComponents/VideoAllComments';
+import VideoBtnsCards from './VideoInfoComponents/VideoBtnsCards';
 
 const color = Theme.DARK;
 const font = Theme.FONTS;
@@ -34,11 +46,21 @@ const font = Theme.FONTS;
 const V1 = ({id, episodeId, episodeNum, provider}) => {
   const {videoState, setVideoState} = useVideoState();
   const navigation = useNavigation();
+  const [netState, setNetState] = useState({
+    type: null,
+    isConnected: null,
+    isWifiEnabled: false,
+    isInternetReachable: null,
+    details: null,
+  });
   const {isConnected, isWifiEnabled} = NetInfo.useNetInfo();
 
   // const [episode, setEpisode] = useState({});
   const [showDownloadSheet, setShowDownloadSheet] = useState(false);
+  const [showCommentsSheet, setShowCommentsSheet] = useState(false);
   const [streamServer, setStreamServer] = useState('vidstreaming');
+  const [cursor, setCursor] = useState(undefined);
+  const [commentsList, setCommentsList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const {setting} = useSettingControl();
 
@@ -67,6 +89,43 @@ const V1 = ({id, episodeId, episodeNum, provider}) => {
     queryKey: ['Episodes', id, refreshing],
     queryFn: () => fetchEpisodeDefault(),
   });
+  const {
+    data: dataChats,
+    isLoading: isLoadingChats,
+    error: errorChats,
+  } = useQuery({
+    queryKey: ['Chats', sourceInfo?.thread?.id, cursor, refreshing],
+    queryFn: () => fetchChatsDef(),
+  });
+
+  const {
+    data: dataReaction,
+    isLoading: isLoadingReaction,
+    error: errorReaction,
+  } = useQuery({
+    queryKey: ['Reactions', sourceInfo?.thread?.id, refreshing],
+    queryFn: () => fetchReaction({id: sourceInfo?.thread?.id}),
+  });
+
+  const fetchChatsDef = async () => {
+    try {
+      const response = await fetchChats({
+        id: sourceInfo?.thread?.id,
+        cursor: cursor,
+      });
+      if (commentsList?.length > 0) {
+        setCommentsList([...commentsList, ...response?.response]);
+      } else {
+        setCommentsList(response?.response);
+      }
+      return response;
+    } catch (error) {
+      throw new Error(error);
+
+      // console.log(error);
+      // Alert.alert('error', error?.message);
+    }
+  };
 
   const fetchEpisodeDefault = async () => {
     try {
@@ -74,8 +133,8 @@ const V1 = ({id, episodeId, episodeNum, provider}) => {
       return response;
     } catch (error) {
       // console.log(error);
-      Alert.alert('error', error);
-      return null;
+      // Alert.alert('error', error?.message);
+      throw new Error(error);
     }
   };
   const fetchSourcesDefault = async () => {
@@ -89,10 +148,18 @@ const V1 = ({id, episodeId, episodeNum, provider}) => {
           streamServer: streamServer,
         });
       }
-      if (response?.sources.length) {
-        const findDefault = response.sources.find(
-          src => src.quality === qualityPrefs._default,
-        );
+      if (response?.sources?.length) {
+        const findDefault = isWifiEnabled
+          ? response?.sources?.find(
+              src =>
+                src?.quality === setting.qualityPrefrence.wifi ||
+                qualityPrefs._default,
+            )
+          : response?.sources?.find(
+              src =>
+                src?.quality === setting.qualityPrefrence.mobile ||
+                qualityPrefs._default,
+            );
 
         setVideoState(prev => ({
           ...prev,
@@ -104,7 +171,7 @@ const V1 = ({id, episodeId, episodeNum, provider}) => {
 
       return response;
     } catch (error) {
-      return {};
+      throw new Error(error);
     }
   };
 
@@ -151,7 +218,7 @@ const V1 = ({id, episodeId, episodeNum, provider}) => {
     const findNextEpIndex = episodesInfo?.episodes?.findIndex(
       (ep, i) => ep?.id === episodeId,
     );
-    if (findNextEpIndex != -1 && findNextEpIndex - 1 >= 0) {
+    if (findNextEpIndex !== -1 && findNextEpIndex - 1 >= 0) {
       setVideoState({...videoState, url: undefined});
 
       const episode = episodesInfo?.episodes[findNextEpIndex - 1];
@@ -167,12 +234,16 @@ const V1 = ({id, episodeId, episodeNum, provider}) => {
 
   const handleShare = async () => {
     try {
-      const url = SERVER_BASE_URL + "/share" +`?type=episode&id=${id}&episodeId=${episodeId}&episodeNum=${episodeNum}&provider=${setting.provider}`;
+      const url =
+        SERVER_BASE_URL +
+        '/share' +
+        `?type=episode&id=${id}&episodeId=${episodeId}&episodeNum=${episodeNum}&provider=${setting.provider}`;
       const imageUrl = animeInfo.animeImg;
-      const title= memoizedAnimeTitle
-      const message= memoizedAnimeTitle + "\n" + "Episode "+ episodeNum +  '\n' + url 
+      const title = memoizedAnimeTitle;
+      const message =
+        memoizedAnimeTitle + '\n' + 'Episode ' + episodeNum + '\n' + url;
 
-      await Share.share({
+      const result = await Share.share({
         title: title,
         url: url,
         message: message,
@@ -188,13 +259,84 @@ const V1 = ({id, episodeId, episodeNum, provider}) => {
         // dismissed
       }
     } catch (error) {
-      Alert.alert(error.message);
+      Alert.alert('error', error?.message);
     }
   };
 
+  const shareToWhatsApp = () => {
+    const url =
+      SERVER_BASE_URL +
+      '/share' +
+      `?type=episode&id=${id}&episodeId=${episodeId}&episodeNum=${episodeNum}&provider=${setting.provider}`;
+    const imageUrl = animeInfo?.animeImg;
+
+    const message =
+      memoizedAnimeTitle +
+      '\n' +
+      'Episode ' +
+      episodeNum +
+      '\n' +
+      url +
+      '\n' +
+      imageUrl;
+
+    Linking.openURL(`whatsapp://send?text=${message}`);
+  };
+
+  const shareToTwitter = () => {
+    const url =
+      SERVER_BASE_URL +
+      '/share' +
+      `?type=episode&id=${id}&episodeId=${episodeId}&episodeNum=${episodeNum}&provider=${setting.provider}`;
+    const imageUrl = animeInfo?.animeImg;
+
+    const message =
+      memoizedAnimeTitle +
+      '\n' +
+      'Episode ' +
+      episodeNum +
+      '\n' +
+      url +
+      '\n' +
+      imageUrl;
+    // const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(message)}`;
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+      message,
+    )}`;
+
+    Linking.openURL(twitterUrl).catch(err =>
+      console.error('An error occurred', err),
+    );
+  };
+
+  const shareToFacebook = () => {
+    const url =
+      SERVER_BASE_URL +
+      '/share' +
+      `?type=episode&id=${id}&episodeId=${episodeId}&episodeNum=${episodeNum}&provider=${setting.provider}`;
+    const imageUrl = animeInfo?.animeImg;
+
+    const message =
+      memoizedAnimeTitle +
+      '\n' +
+      'Episode ' +
+      episodeNum +
+      '\n' +
+      url +
+      '\n' +
+      imageUrl;
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+      url,
+    )}&description=${message}&quote=${encodeURIComponent(message)}`;
+
+    Linking.openURL(facebookUrl).catch(err =>
+      console.error('An error occurred', err),
+    );
+  };
   const qualitySettingOp = (ops = false) => {
     setVideoState(prev => ({...prev, showQualitySetting: ops}));
   };
+
   const playbackRateSettingOp = (ops = false) => {
     setVideoState(prev => ({...prev, showPlayBackRateSetting: ops}));
   };
@@ -203,6 +345,9 @@ const V1 = ({id, episodeId, episodeNum, provider}) => {
   };
   const handleDownloadSheet = () => {
     setShowDownloadSheet(!showDownloadSheet);
+  };
+  const handleCommentSheet = () => {
+    setShowCommentsSheet(!showCommentsSheet);
   };
   const settingOp = (ops = false) => {
     setVideoState(prev => ({...prev, showSetting: ops}));
@@ -213,13 +358,25 @@ const V1 = ({id, episodeId, episodeNum, provider}) => {
   const setStreamSV = sv => {
     setStreamServer(sv);
   };
-  
+
   useEffect(() => {
     const backHandler = navigation.addListener('beforeRemove', e => {
       setVideoState({...videoState, url: undefined});
     });
-
-    return () => navigation.removeListener(backHandler);
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setNetState(prev => ({
+        ...prev,
+        type: state.type,
+        isConnected: state.isConnected,
+        isWifiEnabled: state.isWifiEnabled,
+        isInternetReachable: state.isInternetReachable,
+        details: state.details,
+      }));
+    });
+    return () => {
+      unsubscribe();
+      navigation.removeListener(backHandler);
+    };
   }, [navigation]);
 
   const progressTrackFunc = async () => {
@@ -247,22 +404,26 @@ const V1 = ({id, episodeId, episodeNum, provider}) => {
       console.log(error);
     }
   };
+
   const memoizedTitle = useMemo(
     () => `Episode ${episodeNum} - ${memoizedAnimeTitle}`,
     [memoizedAnimeTitle, episodeNum],
   );
 
-  useEffect(()=>{
-    console.log(JSON.stringify(videoState,null,2))
-  },[videoState.videoTracks, videoState.selectedVideoTrack])
   if (errorAnime) {
-    Alert.alert('error', errorAnime);
+    Alert.alert('error', errorAnime?.message);
   }
   if (errorEpisodes) {
-    Alert.alert('error', errorEpisodes);
+    Alert.alert('error', errorEpisodes?.message);
   }
   if (errorSource) {
-    Alert.alert('error', errorSource);
+    Alert.alert('error', errorSource?.message);
+  }
+  if (errorChats) {
+    Alert.alert('error', errorChats?.message);
+  }
+  if (errorReaction) {
+    Alert.alert('error', errorReaction?.message);
   }
 
   return (
@@ -270,7 +431,6 @@ const V1 = ({id, episodeId, episodeNum, provider}) => {
       <VideoPlayyer
         id={episodeId}
         url={videoState.url}
-        // url={videoState.url}
         videoTitle={memoizedTitle}
         isLoading={isLoadingSource}
         progressTrackFunc={progressTrackFunc}
@@ -284,19 +444,37 @@ const V1 = ({id, episodeId, episodeNum, provider}) => {
             isLoading={isLoadingAnime}
             onPressTitle={onPressTitle}
           />
+
           <VideoInfoBtnsComponent
             onPressPrev={handlePrevBtn}
             onPressNext={handleNextBtn}
             onPressShare={handleShare}
             onPressDownload={handleDownloadSheet}
-            disablePrevBtn={episodeNum === 1}
+            disablePrevBtn={episodeNum <= 1}
             disableNextBtn={episodeNum >= episodesInfo?.episodes?.length}
           />
-          <VideoSourcesServerComponent
+          <VideoBtnsCards
+            list={dataReaction?.reactions?.sort((a, b) => a?.order - b?.order)}
+            isLoading={isLoadingReaction}
+            shareToTwitter={() => shareToTwitter()}
+            shareToFacebook={() => shareToFacebook()}
+            shareToWhatsApp={() => shareToWhatsApp()}
+            onPressShare={() => handleShare()}
+            onPressDownload={() => handleDownloadSheet()}
+          />
+          {/* <VideoSourcesServerComponent
             episodeId={episodeId}
             server={streamServer}
             setServer={setStreamSV}
+            serverList={sourceInfo?.multiLinks}
+          /> */}
+          <VideoChatsComponent
+            list={dataChats?.response || []}
+            source={sourceInfo}
+            isLoading={isLoadingChats}
+            onClick={() => handleCommentSheet()}
           />
+
           <EpisodesSheet
             episodesInfo={episodesInfo}
             id={id}
@@ -314,75 +492,100 @@ const V1 = ({id, episodeId, episodeNum, provider}) => {
       <BottomSheet
         enabled={videoState.showSetting}
         setEnabled={settingOp}
-        max_Trans_Y={0.3} //-height * 1.5
+        max_Trans_Y={0.29} //-height * 1.5
         borderRadius={20}
         endPoint={0.92}
         snapPoint={0.6}
-        onEnd={() => setVideoState(prev => ({...prev, showSetting: false}))}
-        children={<SettingCard setShowSettingSheet={settingOp} />}
-      />
+        onEnd={() => setVideoState(prev => ({...prev, showSetting: false}))}>
+        <SettingCard setShowSettingSheet={settingOp} />
+      </BottomSheet>
+
       {/* Quality Setting Sheet */}
       <BottomSheet
         enabled={videoState.showQualitySetting}
         setEnabled={qualitySettingOp}
-        max_Trans_Y={0.3} //-height * 1.5
+        max_Trans_Y={0.29} //-height * 1.5
         borderRadius={20}
         endPoint={0.92}
         snapPoint={0.6}
         onEnd={() =>
           setVideoState(prev => ({...prev, showQualitySetting: false}))
-        }
-        children={
-          <QualitySetting
-            qualities={sourceInfo?.sources}
-            // enableCCAniwatch={enableCCAniwatch}
-          />
-        }
-      />
+        }>
+        <QualitySetting
+          qualities={sourceInfo?.sources}
+          // enableCCAniwatch={enableCCAniwatch}
+        />
+      </BottomSheet>
+
       {/* Playback Rate setting Sheet */}
       <BottomSheet
         enabled={videoState.showPlayBackRateSetting}
         setEnabled={playbackRateSettingOp}
-        max_Trans_Y={0.3} //-height * 1.5
+        max_Trans_Y={0.29} //-height * 1.5
         borderRadius={20}
         endPoint={0.92}
         snapPoint={0.6}
         onEnd={() =>
           setVideoState(prev => ({...prev, showPlayBackRateSetting: false}))
-        }
-        children={<PlayBackRateSetting />}
-      />
+        }>
+        <PlayBackRateSetting />
+      </BottomSheet>
+
       {/* ResizeMode Sheet */}
       <BottomSheet
         enabled={videoState.showResizeSetting}
         setEnabled={resizeModeSettingOp}
-        max_Trans_Y={0.3} //-height * 1.5
+        max_Trans_Y={0.29} //-height * 1.5
         borderRadius={20}
         endPoint={0.92}
         snapPoint={0.6}
         onEnd={() =>
           setVideoState(prev => ({...prev, showResizeSetting: false}))
-        }
-        children={<ResizeModeSetting setResizeVideo={setResizeVideo} />}
-      />
+        }>
+        <ResizeModeSetting setResizeVideo={setResizeVideo} />
+      </BottomSheet>
+
       {/* Download Sheet */}
       <BottomSheet
         enabled={showDownloadSheet}
         setEnabled={handleDownloadSheet}
-        max_Trans_Y={0.3} //-height * 1.5
+        max_Trans_Y={0.29} //-height * 1.5
         borderRadius={20}
         endPoint={0.92}
         snapPoint={0.6}
-        onEnd={() => setShowDownloadSheet(false)}
-        children={
-          <DownloadSheet
-            setShowDownloadSheet={setShowDownloadSheet}
-            showDownloadSheet={showDownloadSheet}
-            episodeId={episodeId}
-            source={sourceInfo}
-          />
-        }
-      />
+        onEnd={() => setShowDownloadSheet(false)}>
+        <DownloadSheet
+          setShowDownloadSheet={setShowDownloadSheet}
+          showDownloadSheet={showDownloadSheet}
+          episodeId={episodeId}
+          source={sourceInfo}
+        />
+      </BottomSheet>
+
+      {/* Commets Sheet */}
+      <BottomSheet
+        enabled={showCommentsSheet}
+        setEnabled={handleCommentSheet}
+        max_Trans_Y={0.29} //-height * 1.5
+        borderRadius={20}
+        endPoint={0.92}
+        snapPoint={0.6}
+        containerStyle={{
+          backgroundColor: color.DarkBackGround,
+          borderBottomLeftRadius: 0,
+          borderBottomRightRadius: 0,
+          borderWidth: 0.5,
+          borderColor: color.LighterGray,
+        }}
+        onEnd={() => setShowCommentsSheet(false)}>
+        <VideoAllComments
+          threadId={sourceInfo?.thread?.id}
+          data={dataChats}
+          isLoading={isLoadingChats}
+          list={commentsList}
+          setCursor={setCursor}
+        />
+      </BottomSheet>
     </View>
   );
 };

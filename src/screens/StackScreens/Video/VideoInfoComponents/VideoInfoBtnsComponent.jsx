@@ -65,7 +65,7 @@ const VideoInfoBtnsComponent = ({
           {prevBtnTitle}
         </Text>
       </TouchableOpacity>
-      <View style={{flexDirection: 'row', gap: 10}}>
+      <View style={{flexDirection: 'row', gap: 10, display:"none"}}>
         <TouchableOpacity style={styles.ExtraBtn} onPress={onPressDownload}>
           <MCIcon name="cloud-download" size={30} color={color.Orange} />
           <Text style={styles.ExtraBtnText}>Download</Text>

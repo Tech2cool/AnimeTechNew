@@ -81,7 +81,7 @@ const V2 = ({id, episodeId, episodeNum, provider}) => {
       return response;
     } catch (error) {
       // console.log(error);
-      Alert.alert('error', error);
+      Alert.alert('error', error?.message);
       return null;
     }
   };
@@ -271,13 +271,13 @@ const V2 = ({id, episodeId, episodeNum, provider}) => {
   );
 
   if (errorAnime) {
-    Alert.alert('error', errorAnime);
+    Alert.alert('error', errorAnime?.message);
   }
   if (errorEpisodes) {
-    Alert.alert('error', errorEpisodes);
+    Alert.alert('error', errorEpisodes?.message);
   }
   if (errorSource) {
-    Alert.alert('error', errorSource);
+    Alert.alert('error', errorSource?.message);
   }
 
   return (

@@ -43,7 +43,7 @@ export const SettingsControlProvider = ({children}) => {
       })
       .catch(err => {
         // console.log(err);
-        Alert.alert('error', err);
+        Alert.alert('error', err?.message);
       });
     getAsyncData(themKey)
       .then(res => {
@@ -56,7 +56,7 @@ export const SettingsControlProvider = ({children}) => {
       })
       .catch(err => {
         // console.log(err);
-        Alert.alert('error', err);
+        Alert.alert('error', err?.message);
       });
   }, []);
   return (

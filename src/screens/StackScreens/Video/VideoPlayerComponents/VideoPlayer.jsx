@@ -3,18 +3,10 @@ import {
   Alert,
   Dimensions,
   StyleSheet,
-  Text,
   ToastAndroid,
   View,
 } from 'react-native';
-import React, {
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, {useEffect, useRef} from 'react';
 import Theme from '../../../../utils/Theme';
 import Video from 'react-native-video';
 import VideoPlayerControls from './VideoPlayerControls';
@@ -36,7 +28,6 @@ const VideoPlayyer = ({
   isLoading = false,
   progressTrackFunc = () => {},
 }) => {
-  const [tapNumber, setTapNumber] = useState(0);
 
   const videoRef = useRef(null);
   const {videoState, setVideoState} = useVideoState();
@@ -49,25 +40,25 @@ const VideoPlayyer = ({
       videoRef.current.pause();
       setVideoState({...videoState, paused: true});
     }
-  }
+  };
 
   const handleOnLoad = async e => {
-    await checkVideoCache(e.duration);
-    // console.log(JSON.stringify(e,null,2))
+    await checkVideoCache(e?.duration);
+    // console?.log(JSON.stringify(e,null,2))
     setVideoState({
       ...videoState,
-      duration: e.duration,
-      // currentTime: e.currentTime,
-      audioTracks: e.audioTracks,
-      canPlayReverse: e.canPlayReverse,
-      canPlaySlowForward: e.canPlaySlowForward,
-      canPlaySlowReverse: e.canPlaySlowReverse,
-      canStepBackward: e.canStepBackward,
-      canStepForward: e.canStepForward,
-      naturalSize: e.naturalSize,
-      // textTracks: e.textTracks,
-      trackId: e.trackId,
-      // videoTracks: e.videoTracks,
+      duration: e?.duration,
+      // currentTime: e?.currentTime,
+      audioTracks: e?.audioTracks,
+      canPlayReverse: e?.canPlayReverse,
+      canPlaySlowForward: e?.canPlaySlowForward,
+      canPlaySlowReverse: e?.canPlaySlowReverse,
+      canStepBackward: e?.canStepBackward,
+      canStepForward: e?.canStepForward,
+      naturalSize: e?.naturalSize,
+      // textTracks: e?.textTracks,
+      trackId: e?.trackId,
+      // videoTracks: e?.videoTracks,
       end: false,
     });
   };
@@ -80,7 +71,7 @@ const VideoPlayyer = ({
     videoRef.current.seek(value);
     setVideoState({...videoState, currentTime: value});
     // setVideoState(prev => ({...prev, currentTime: value}));
-  }
+  };
   const handleSliderValueChange = value => {
     // setVideoState(prev=>({ ...prev, currentTime: value }))
     handleSeek(value);
@@ -88,12 +79,12 @@ const VideoPlayyer = ({
 
   const handleProgress = e => {
     if (!videoState.seeking) {
-      setAsyncData(id, JSON.stringify(e.currentTime));
+      setAsyncData(id, JSON.stringify(e?.currentTime) || '0');
       setVideoState(prev => ({
         ...prev,
-        currentTime: e.currentTime,
-        playableDuration: e.playableDuration,
-        seekableDuration: e.seekableDuration,
+        currentTime: e?.currentTime,
+        playableDuration: e?.playableDuration,
+        seekableDuration: e?.seekableDuration,
       }));
       // setMyList(e.currentTime, videoState.duration);
       if (!videoState.paused && videoState.showControl) {
@@ -121,10 +112,10 @@ const VideoPlayyer = ({
       // SystemNavigationBar.stickyImmersive();
       videoRef.current.presentFullscreenPlayer();
     }
-  }
+  };
 
   const handleBuffering = e => {
-    setVideoState(prev => ({...prev, buffering: e.isBuffering}));
+    setVideoState(prev => ({...prev, buffering: e?.isBuffering}));
   };
   const onFullscreenPlayerWillDismiss = () => {
     // Orientation.lockToPortrait();
@@ -144,7 +135,7 @@ const VideoPlayyer = ({
         handleSeek(0);
       }
     } catch (error) {
-      ToastAndroid.show('err', error);
+      ToastAndroid.show('err', error?.message);
     }
     if (duration) {
       setVideoState(prev => ({
@@ -153,36 +144,35 @@ const VideoPlayyer = ({
       }));
     }
   };
-  const handleonVideoTracks = (e)=>{
+  const handleonVideoTracks = e => {
     // console.log(e)
     // console.log(videoState.selectedVideoTrack)
-    const tracks=[]
+    const tracks = [];
     tracks.push({
-      selected:true,
-      height: "auto",
-      width: "auto",
-      url:videoState.url,
+      selected: true,
+      height: 'auto',
+      width: 'auto',
+      url: videoState.url,
       trackId: -1,
-    })
-    e.videoTracks.map((trck)=>{
-      tracks.push(trck)
-    })
+    });
+    e?.videoTracks?.map(trck => {
+      tracks.push(trck);
+    });
     // console.log(JSON.stringify(tracks, null, 2))
-    setVideoState(prev=>({
+    setVideoState(prev => ({
       ...prev,
-      videoTracks:tracks,
-    }))
-
-  }
+      videoTracks: tracks,
+    }));
+  };
   useEffect(() => {
     checkVideoCache();
   }, [id]);
 
   return (
     <View
-      style={
-        [videoState.fullscreen ? styles.containerFullscreen : styles.container]
-      }>
+      style={[
+        videoState.fullscreen ? styles.containerFullscreen : styles.container,
+      ]}>
       <Video
         ref={videoRef}
         source={{
@@ -199,7 +189,7 @@ const VideoPlayyer = ({
         // selectedTextTrack={videoState.selectedTextTrack}
         // textTracks={videoState.textTracks}
         resizeMode={videoState.resizeMode}
-        onError={e => Alert.alert('error', e.error.errorString)}
+        onError={e => Alert.alert('error', e?.error?.errorString)}
         onProgress={handleProgress}
         onBuffer={handleBuffering}
         onLoad={handleOnLoad}
@@ -257,14 +247,14 @@ const VideoPlayyer = ({
   );
 };
 
-export default VideoPlayyer
+export default VideoPlayyer;
 
 const styles = StyleSheet.create({
   video: {
     height: width * (9 / 16),
     width: width,
     position: 'relative',
-    backgroundColor: color.DarkBackGround,
+    backgroundColor: color.Black,
   },
   videoFullScreen: {
     height: width,

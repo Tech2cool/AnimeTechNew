@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {
   Dimensions,
   StyleSheet,
@@ -5,19 +6,13 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import React, {useEffect, useMemo, useRef} from 'react';
+import React, {useMemo, useRef} from 'react';
 import Theme from '../../../../utils/Theme';
 import {F5Icon, IIcon, MCIcon, MIcon} from '../../../../utils/contstant';
 import {Slider} from '@react-native-assets/slider';
 import {useNavigation} from '@react-navigation/native';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
-import Animated, {
-  runOnJS,
-  cancelAnimation,
-  useSharedValue,
-  withDelay,
-  withTiming,
-} from 'react-native-reanimated';
+import Animated, {runOnJS, useSharedValue} from 'react-native-reanimated';
 import Ripple from 'react-native-material-ripple';
 import {VidioDuration} from '../../../../utils/HelperFunctions';
 import {TapControler} from '../Controllers/TapController';
@@ -27,10 +22,6 @@ import Subtitles from 'react-native-subtitles';
 
 const color = Theme.DARK;
 const font = Theme.FONTS;
-let count = 0;
-const controlAnimteConfig = {
-  duration: 200,
-};
 const hitSlop = {left: 8, bottom: 8, right: 8, top: 8};
 
 const {width, height} = Dimensions.get('window');
@@ -66,7 +57,7 @@ const VideoPlayerControls = params => {
     return `${VidioDuration(videoState.duration)}`;
   }, [videoState.duration]);
 
-  const iconSize = videoState.fullscreen ? 40 : 35;
+  const iconSize = videoState.fullscreen ? 35 : 30;
   const iconColor = color.White;
 
   const sidRef = useRef(null);
@@ -106,27 +97,6 @@ const VideoPlayerControls = params => {
       return 'fast-forward-60';
     }
   }, [videoState.seekSecond]);
-
-  // const updateTap = () => {
-  //   setTapNumber(value => value + 1);
-  //   setVideoState(prev => ({
-  //     ...prev,
-  //     showControl: !prev.showControl,
-  //     showSetting: false,
-  //     showQualitySetting: false,
-  //     showPlayBackRateSetting: false,
-  //     seeking: tapNumber >= 2 && true,
-  //   }));
-
-  //   clearTimeout(tapRef.current);
-  //   tapRef.current = setTimeout(() => {
-  //     setVideoState(prev => ({
-  //       ...prev,
-  //       seeking: false,
-  //     }));
-  //     setTapNumber(0);
-  //   }, 300);
-  // };
 
   const SeekBackward = () => {
     handleSeek(videoState.currentTime - parseInt(videoState.seekSecond));
@@ -268,12 +238,12 @@ const VideoPlayerControls = params => {
     'worklet';
     runOnJS(onSettingPress)();
   };
-  const showHideCaption = ()=>{
-    setVideoState(prev=>({
+  const showHideCaption = () => {
+    setVideoState(prev => ({
       ...prev,
       showSubtitle: !prev.showSubtitle,
-    }))
-  }
+    }));
+  };
   const onCaptionTapHandler = () => {
     'worklet';
     runOnJS(showHideCaption)();
@@ -300,58 +270,45 @@ const VideoPlayerControls = params => {
             : undefined,
         },
       ]}>
-        {
-          videoState.selectedSubtitle.file && videoState.showSubtitle && (
-            <View style={{position: 'absolute', bottom: -15, left: 0, right: 0}}>
-            <Subtitles
-              currentTime={videoState.currentTime}
-              textStyle={{
-                color: color.White,
-                fontFamily: font.RobotoMedium,
-                fontSize: videoState.fullscreen ? 20 : 13,
-                backgroundColor: 'transparent',
-                textShadowColor: 'rgba(0,0,0,0.5)',
-                textShadowOffset: {width: 1, height: -1},
-                textShadowRadius: 10,
-              }}
-              containerStyle={{
-                backgroundColor:"transparent",
-              }}
-              selectedsubtitle={{
-                file:videoState.selectedSubtitle.file ? videoState.selectedSubtitle.file : ""
-              }}
-            />
-          </View>
-    
-          )
-        }
+      {videoState.selectedSubtitle.file && videoState.showSubtitle && (
+        <View style={{position: 'absolute', bottom: -15, left: 0, right: 0}}>
+          <Subtitles
+            currentTime={videoState.currentTime}
+            textStyle={{
+              color: color.White,
+              fontFamily: font.RobotoMedium,
+              fontSize: videoState.fullscreen ? 20 : 13,
+              backgroundColor: 'transparent',
+              textShadowColor: 'rgba(0,0,0,0.5)',
+              textShadowOffset: {width: 1, height: -1},
+              textShadowRadius: 10,
+            }}
+            containerStyle={{
+              backgroundColor: 'transparent',
+            }}
+            selectedsubtitle={{
+              file: videoState.selectedSubtitle.file
+                ? videoState.selectedSubtitle.file
+                : '',
+            }}
+          />
+        </View>
+      )}
 
       <GestureDetector gesture={gesture}>
         <Animated.View
           hitSlop={hitSlop}
           style={[styles.wrapper, {top: videoState.fullscreen ? 15 : 0}]}>
-          {/* <GestureDetector gesture={Gesture.Exclusive(pan, tap)}>
-        <Animated.View
-          style={[
-            {
-              // flex:1,
-              position: 'absolute',
-              top: videoState.fullscreen ? 30 : 10,
-              left: 0,
-              right: 0,
-              bottom: videoState.fullscreen ? 40 : 30,
-            },
-          ]}></Animated.View>
-      </GestureDetector> */}
-
           {videoState.showControl && !videoState.seeking && (
             <View style={styles.middleLayer}>
               <View style={styles.topView}>
                 <View
                   style={{
-                    flex:3,
+                    flex: 3,
                     // width: '82%',
                     flexDirection: 'row',
+                    paddingTop: videoState.fullscreen ? 0: 5,
+                    alignItems: 'center',
                     gap: 5,
                   }}>
                   <TapControler onPress={onBackTapHandler}>
@@ -361,16 +318,33 @@ const VideoPlayerControls = params => {
                       color={iconColor}
                     />
                   </TapControler>
-                  <Text numberOfLines={1} style={[styles.videoTitle,{fontSize:videoState.fullscreen?14:13}]}>
+                  <Text
+                    numberOfLines={1}
+                    style={[
+                      styles.videoTitle,
+                      {fontSize: videoState.fullscreen ? 14 : 13},
+                    ]}>
                     {VideoTitle}
                   </Text>
                 </View>
-                <View style={{flexDirection: 'row', paddingRight: 10,paddingLeft:5, gap:10,alignSelf:"flex-end", justifyContent:'flex-end'}}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    paddingRight: 10,
+                    paddingLeft: 5,
+                    gap: 10,
+                    alignSelf: 'flex-end',
+                    justifyContent: 'flex-end',
+                  }}>
                   <TapControler onPress={onCaptionTapHandler}>
-                    <MIcon  
-                      name={videoState.showSubtitle ?'closed-caption':'closed-caption-off'}
+                    <MIcon
+                      name={
+                        videoState.showSubtitle
+                          ? 'closed-caption'
+                          : 'closed-caption-off'
+                      }
                       size={iconSize - 5}
-                      color={videoState.showSubtitle ?color.Orange:iconColor}
+                      color={videoState.showSubtitle ? color.Orange : iconColor}
                     />
                   </TapControler>
 
@@ -393,7 +367,7 @@ const VideoPlayerControls = params => {
                 <TapControler onPress={onPauseTapHandler}>
                   <F5Icon
                     name={videoState.paused ? 'play-circle' : 'pause-circle'}
-                    size={iconSize}
+                    size={iconSize + 5}
                     color={iconColor}
                   />
                 </TapControler>
@@ -446,7 +420,7 @@ const VideoPlayerControls = params => {
               left: 0,
               right: 0,
               // backgroundColor:"red",
-              marginVertical: 5,
+              // marginTop: 5,
             },
           ]}>
           {/* <TapControler onPress={onDummyTapHandler}> */}
@@ -554,7 +528,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 10,
     // flex: 1,
-    paddingTop: 10,
+    paddingTop: 0,
     paddingLeft: 5,
   },
   middleView: {
@@ -572,7 +546,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     // gap: 10,
     flex: 1,
-    paddingVertical: 10,
+    // paddingVertical: 10,
   },
   videoTitle: {
     fontFamily: font.OpenSansMedium,

@@ -53,7 +53,7 @@ const RequestedList = ({refreshing, list, isLoading, error}) => {
   }
 
   if (error) {
-    Alert.alert('error', error);
+    Alert.alert('error', error?.message);
   }
 
   return (
@@ -74,7 +74,7 @@ const RequestedList = ({refreshing, list, isLoading, error}) => {
       </View>
       <FlatList
         horizontal={true}
-        data={list}
+        data={list?.sort((a, b) => a?.index - b?.index)}
         keyExtractor={(item, index) => `${item.id}`}
         renderItem={renderItem}
         contentContainerStyle={{gap: 10}}

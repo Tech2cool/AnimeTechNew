@@ -43,7 +43,7 @@ const Random = ({route, navigation}) => {
   );
 
   if (error) {
-    Alert.alert('error', error);
+    Alert.alert('error', error?.message);
   }
   const renderItem = useCallback(({item}) => {
     return (
@@ -90,7 +90,7 @@ const Random = ({route, navigation}) => {
         <FlatList
           horizontal={false}
           numColumns={2}
-          data={data?.list}
+          data={data?.list?.sort((a, b) => a?.index - b?.index)}
           keyExtractor={(item, i) => `${item.animeId || item?.animeID}`}
           renderItem={renderItem}
           columnWrapperStyle={{gap: 10, padding: 5}}

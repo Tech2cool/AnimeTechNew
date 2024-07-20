@@ -56,7 +56,7 @@ const QualitySetting = ({qualities, enableCCAniwatch}) => {
         </TouchableOpacity>
         <View style={{flex: 1}}>
           <ScrollView>
-            {
+            {/* {
               videoState?.videoTracks?.map((track,i)=>(
                 <TouchableOpacity key={i} style={[styles.Btn,{
                   backgroundColor:
@@ -74,8 +74,8 @@ const QualitySetting = ({qualities, enableCCAniwatch}) => {
                   <Text style={styles.btnText}>{track?.height}</Text>
                 </TouchableOpacity>
               ))
-            }
-            {/* {qualities?.map((src, i) => (
+            } */}
+            {qualities?.map((src, i) => (
               <TouchableOpacity
                 key={src?.quality + src?.provider + i}
                 onPress={() => handleQualityChange(src)}
@@ -103,7 +103,7 @@ const QualitySetting = ({qualities, enableCCAniwatch}) => {
                   </Text>
                 </View>
               </TouchableOpacity>
-            ))} */}
+            ))}
           </ScrollView>
         </View>
       </View>

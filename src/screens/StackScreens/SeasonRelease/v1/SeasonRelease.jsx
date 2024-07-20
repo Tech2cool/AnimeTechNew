@@ -63,9 +63,8 @@ const SeasonRelease = ({navigation, route}) => {
   const onSelectDropDown = useCallback((selectedItem, index) => {
     // console.log(selectedItem);
     navigation.navigate('SeasonRelease', {
-        season: selectedItem.id,
-    })
-
+      season: selectedItem.id,
+    });
   }, []);
 
   const buttonTextAfterSelection = useCallback(
@@ -112,7 +111,7 @@ const SeasonRelease = ({navigation, route}) => {
     );
   }, [data?.pages]);
   if (error) {
-    Alert.alert('error', error);
+    Alert.alert('error', error?.message);
   }
 
   return (
@@ -145,7 +144,7 @@ const SeasonRelease = ({navigation, route}) => {
       <FlatList
         horizontal={false}
         numColumns={2}
-        data={data?.list}
+        data={data?.list?.sort((a, b) => a?.index - b?.index)}
         keyExtractor={(item, i) => `${item?.animeID || item?.animeId || i}`}
         renderItem={renderItem}
         refreshControl={

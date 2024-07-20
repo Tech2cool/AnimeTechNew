@@ -1,4 +1,10 @@
-import {RefreshControl, ScrollView, StyleSheet, Text, View, Alert} from 'react-native';
+import {
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  View,
+  Alert,
+} from 'react-native';
 import React, {useCallback, useState} from 'react';
 import Theme from '../../../../utils/Theme';
 import BigImageSlider from './components/BigImageSlider';
@@ -9,7 +15,7 @@ import MoviesRelease from './components/MoviesRelease';
 import VersionChecker from '../../../../components/VersionChecker';
 import SmallImageSlider from './components/SmallImageSlider';
 import {useQuery} from '@tanstack/react-query';
-import {fetchHome, fetchSeasonalAnime, fetchUpcoming} from '../../../../Query/v1';
+import {fetchHome, fetchUpcoming} from '../../../../Query/v1';
 import UpcomingAnimes from './components/gogotakuInfo/UpcomingAnimes';
 import SliderGogotaku from './components/gogotakuInfo/SliderGogotaku';
 import Trailers from './components/gogotakuInfo/Trailers';
@@ -43,14 +49,14 @@ const Home = ({navigation, route}) => {
     error: errorUpcoming,
   } = useQuery({
     queryKey: ['upcoming', refreshing],
-    queryFn: () => fetchUpcoming({type:undefined, page:undefined}),
+    queryFn: () => fetchUpcoming({type: undefined, page: undefined}),
   });
 
-  if(errorGogotaku){
-    Alert.alert("error", errorGogotaku)
+  if (errorGogotaku) {
+    Alert.alert('error', errorGogotaku?.message);
   }
-  if(errorUpcoming){
-    Alert.alert("error", errorUpcoming)
+  if (errorUpcoming) {
+    Alert.alert('error', errorUpcoming?.message);
   }
   return (
     <ScrollView

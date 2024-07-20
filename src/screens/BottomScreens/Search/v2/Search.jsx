@@ -141,7 +141,7 @@ const Search = ({navigation, route}) => {
   }, [data?.pageInfo?.pages]);
 
   if (error) {
-    Alert.alert('error', error);
+    Alert.alert('error', error?.message);
   }
 
   return (

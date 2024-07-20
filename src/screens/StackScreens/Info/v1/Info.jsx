@@ -108,10 +108,10 @@ const Info = ({navigation, route, id}) => {
   };
   
   if (error) {
-    Alert.alert('error', error);
+    Alert.alert('error', error?.message);
   }
   if (errorEpisode) {
-    Alert.alert('error', errorEpisode);
+    Alert.alert('error', errorEpisode?.message);
   }
 
   return (

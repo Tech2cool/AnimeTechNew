@@ -54,7 +54,7 @@ const TrendingAnime = ({refreshing, data, isLoading, error}) => {
   }
 
   if (error) {
-    Alert.alert('error', error);
+    Alert.alert('error', error?.message);
   }
 
   return (

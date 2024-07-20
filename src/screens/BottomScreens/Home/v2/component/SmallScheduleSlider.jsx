@@ -27,7 +27,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {MCIcon} from '../../../../../utils/contstant';
 import {useNavigation} from '@react-navigation/native';
 import {useSettingControl} from '../../../../../context/SettingsControlContext';
-import {fetchScheduleAniwatch} from "../../../../../Query/v2"
+import {fetchScheduleAniwatch} from '../../../../../Query/v2';
 import moment from 'moment';
 const {width, height} = Dimensions.get('window');
 const color = Theme.DARK;
@@ -43,7 +43,7 @@ const SmallScheduleSlider = ({refreshing}) => {
   const {setting} = useSettingControl();
   const {data, isLoading, error} = useQuery({
     queryKey: ['aniwatch_schedule', todayDate, , refreshing],
-    queryFn: () => fetchScheduleAniwatch({date:todayDate }),
+    queryFn: () => fetchScheduleAniwatch({date: todayDate}),
   });
   const memoizedPoster = useCallback(item => {
     if (item?.AdditionalInfo?.posterImage?.large) {
@@ -145,7 +145,7 @@ const SmallScheduleSlider = ({refreshing}) => {
         </TouchableOpacity>
       );
     },
-    [refreshing, setting.language],
+    [refreshing, setting.language,isLoading],
   );
 
   useEffect(() => {
@@ -175,7 +175,7 @@ const SmallScheduleSlider = ({refreshing}) => {
   }
 
   if (error) {
-    Alert.alert('error', error);
+    Alert.alert('error', error?.message);
   }
 
   return (

@@ -142,7 +142,7 @@ const SliderGogotaku = ({refreshing,list, isLoading,error}) => {
   }
 
   if (error) {
-    Alert.alert('error', error);
+    Alert.alert('error', error?.message);
   }
 
   return (
@@ -151,7 +151,7 @@ const SliderGogotaku = ({refreshing,list, isLoading,error}) => {
       <FlatList
         ref={flatListRef}
         horizontal={true}
-        data={list}
+        data={list?.sort((a, b) => a?.index - b?.index)}
         keyExtractor={(item, index) => `${item.animeID || item.animeId}`}
         renderItem={renderItem}
         getItemLayout={getItemLayout}

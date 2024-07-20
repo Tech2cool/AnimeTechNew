@@ -21,7 +21,7 @@ export const scrapeStreamSB = async id => {
   try {
     let url = `${BASE_URL}/${id}`;
     const response = await axios.get(url);
-    const $ = load(response.data);
+    const $ = load(response?.data);
 
     $('div.anime_muti_link > ul > li').each((i, el) => {
       const server = $(el).attr('class');
@@ -46,13 +46,13 @@ export const scrapeStreamSB = async id => {
     ).attr('data-video')}`;
     // const serverUrl = new URL(server);
     const vIds = await axios.get(linkURL);
-    const $$ = load(vIds.data);
+    const $$ = load(vIds?.data);
     // console.log($$)
 
     let scriptContent = '';
     $$('script').each(function () {
       const content = $$(this).html();
-      if (content.includes('sources')) {
+      if (content?.includes('sources')) {
         scriptContent = content;
         return false; // Exit the loop after finding the script with 'sources'
       }
@@ -73,7 +73,7 @@ export const scrapeStreamSB = async id => {
     let matchedURL;
 
     // If a match is found, the URL will be in the second element of the array
-    if (match && match.length > 1) {
+    if (match && match?.length > 1) {
       const fileUrl = match[1];
       // console.log(fileUrl);
       matchedURL = fileUrl;
@@ -82,7 +82,7 @@ export const scrapeStreamSB = async id => {
       matchedURL = null;
     }
     const resppp = await axios.get(matchedURL);
-    const resolutions = (await resppp.data).match(
+    const resolutions = (await resppp?.data).match(
       /(RESOLUTION=)(.*)(\s*?)(\s*.*)/g,
     );
     // console.log(resolutions)
@@ -91,7 +91,7 @@ export const scrapeStreamSB = async id => {
       const quality = res?.split('\n')[0]?.split('x')[1]?.split(',')[0];
       const url = matchedURL;
       result.sources.push({
-        url: url + '/' + res.split('\n')[1],
+        url: url + '/' + res?.split('\n')[1],
         quality: quality + 'p',
         provider: 'streamwish',
       });
@@ -107,6 +107,7 @@ export const scrapeStreamSB = async id => {
     // result.status = resppp.status;
     // result.statusText = resppp.statusText;
     // result.request = resppp.request
+
     return result;
   } catch (err) {
     //   console.log(err);
