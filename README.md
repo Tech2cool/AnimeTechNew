@@ -42,37 +42,32 @@ yarn start
 ```
 ### Demo Screeshots
 <div>
-
-### SplashScreen 
-   <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/splash-gif.gif" height="500" width="350" align="right">
+<h2 align="center">⭐ SplashScreen ⭐</h2>
+   <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/splash-gif.gif" height="650" width="350" align="right">
 </div>
 
 <div>
-
-### HomeScreen
-   <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/home-info.gif" height="760" width="350" align="right">
+<h2 align="center">⭐ HomeScreen ⭐</h2>
+   <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/home-info.gif" height="650" width="350" align="right">
 </div>
 
 <div>
-
-### VideoScreen 
-   <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/video-info.gif" height="760" width="350" align="right">
+<h2 align="center">⭐ VideoScreen ⭐</h2>
+   <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/video-info.gif" height="650" width="350" align="right">
 </div>
 
 <div>
-
-### SearchScreen 
-   <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/search-info.gif" height="760" width="350" align="right">
+<h2 align="center">⭐ SearchScreen ⭐</h2>
+   <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/search-info.gif" height="650" width="350" align="right">
 </div>
 
 <div>
-
-### MyListScreen 
-   <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/mylist-info.gif" height="760" width="350" align="right">
+<h2 align="center">⭐ MyListScreen ⭐</h2>
+   <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/mylist-info.gif" height="650" width="350" align="right">
 </div>
 
 <div>
-
-### Random Animes Screen
-   <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/random-info.gif" height="760" width="350" align="right">
+<h2 align="center">⭐ Random Animes Screen ⭐</h2>
+   
+   <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/random-info.gif" height="650" width="350" align="right">
 </div>
