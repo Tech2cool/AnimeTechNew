@@ -64,7 +64,7 @@ const RecentRelease = ({refreshing}) => {
   }
 
   if (error) {
-    Alert.alert('error', error);
+    Alert.alert('error', error?.message);
   }
 
   return (
@@ -85,7 +85,7 @@ const RecentRelease = ({refreshing}) => {
       </View>
       <FlatList
         horizontal={true}
-        data={data?.list}
+        data={data?.list?.sort((a, b) => a?.index - b?.index)}
         keyExtractor={(item, index) => `${item.animeID}`}
         renderItem={renderItem}
         contentContainerStyle={{gap: 10}}

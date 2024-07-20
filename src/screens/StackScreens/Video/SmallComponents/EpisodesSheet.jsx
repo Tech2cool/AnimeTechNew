@@ -12,8 +12,11 @@ import SelectDropdown from 'react-native-select-dropdown';
 import Theme from '../../../../utils/Theme';
 import {MCIcon} from '../../../../utils/contstant';
 import SkeletonSlider from '../../../../components/SkeletonSlider';
-import { findIndexInPaginatedData, generateArray } from '../../../../utils/HelperFunctions';
-import { useVideoState } from '../../../../context/VideoStateContext';
+import {
+  findIndexInPaginatedData,
+  generateArray,
+} from '../../../../utils/HelperFunctions';
+import {useVideoState} from '../../../../context/VideoStateContext';
 const color = Theme.DARK;
 const font = Theme.FONTS;
 const EpisodesSheet = ({
@@ -26,7 +29,7 @@ const EpisodesSheet = ({
 }) => {
   const epFlatListRef = useRef(null);
   const navigation = useNavigation();
-  const {videoState, setVideoState}= useVideoState()
+  const {videoState, setVideoState} = useVideoState();
 
   const [currentPage, setCurrentPage] = useState({
     index: 0,
@@ -35,7 +38,7 @@ const EpisodesSheet = ({
   });
 
   const navigateVideo = item => {
-    setVideoState({...videoState, url:undefined})
+    setVideoState({...videoState, url: undefined});
 
     navigation.navigate('watch', {
       id: id,
@@ -61,7 +64,9 @@ const EpisodesSheet = ({
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor:
-              (episodeNum === item.number || episodeNum === item.episodeNum || episodeId === item.id)
+              episodeNum === item.number ||
+              episodeNum === item.episodeNum ||
+              episodeId === item.id
                 ? color.Orange
                 : undefined,
           }}>
@@ -101,13 +106,16 @@ const EpisodesSheet = ({
     () => <MCIcon name={'chevron-down'} color={color.Orange} size={25} />,
     [],
   );
-  useEffect(()=>{
-    if(episodesInfo?.episodes?.length){
-      const { page, indexInPage } = findIndexInPaginatedData(episodesInfo?.episodes, episodeId, 100);
-      setCurrentPage(episodesInfo?.pages[page - 1])
+  useEffect(() => {
+    if (episodesInfo?.episodes?.length) {
+      const {page, indexInPage} = findIndexInPaginatedData(
+        episodesInfo?.episodes,
+        episodeId,
+        100,
+      );
+      setCurrentPage(episodesInfo?.pages[page - 1]);
     }
-
-  },[episodeId, episodesInfo])
+  }, [episodeId, episodesInfo]);
   if (isLoading) {
     return (
       <View
@@ -118,41 +126,29 @@ const EpisodesSheet = ({
           flexWrap: 'wrap',
           justifyContent: 'center',
           borderColor: color.LighterGray,
-          borderWidth: 0.5,
+          borderWidth: 0.4,
           paddingVertical: 5,
         }}>
-        {generateArray(1,20).map(
-          (item, i) => (
-            <SkeletonSlider
-              key={item}
-              width={60}
-              height={40}
-              opacity={1}
-              borderRadius={10}
-            />
-          ),
-        )}
+        {generateArray(1, 20).map((item, i) => (
+          <SkeletonSlider
+            key={item}
+            width={60}
+            height={40}
+            opacity={1}
+            borderRadius={10}
+          />
+        ))}
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          paddingHorizontal: 5,
-          borderColor: color.LighterGray,
-          borderWidth: 1,
-          alignItems: 'center',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          //   margin: 10,
-        }}>
+      <View style={styles.epHeadingContainer}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Text style={{fontFamily: font.OpenSansBold, color: color.White}}>
             Total Episodes:
           </Text>
-
           <View
             style={{
               flexDirection: 'row',
@@ -175,7 +171,7 @@ const EpisodesSheet = ({
           rowStyle={styles.rowStyle}
           selectedRowTextStyle={styles.selectedRowTextStyle}
           selectedRowStyle={styles.selectedRowStyle}
-          defaultButtonText='...'
+          defaultButtonText="..."
           defaultValue={episodesInfo?.pages?.find(
             pg => pg?.page === currentPage?.page,
           )}
@@ -185,33 +181,41 @@ const EpisodesSheet = ({
           rowTextForSelection={rowTextForSelection}
         />
       </View>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: 'row',
-          gap: 7,
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          borderColor: color.LighterGray,
-          borderWidth: 0.5,
-          paddingVertical: 5,
-        }}>
-        {episodesInfo?.list?.length >0 && episodesInfo?.list[currentPage?.index || 0]?.map((item, i) =>
-          renderitem({item, index: i}),
-        )}
+      <View style={styles.epCardContainer}>
+        {episodesInfo?.list?.length > 0 &&
+          episodesInfo?.list[currentPage?.index || 0]?.map((item, i) =>
+            renderitem({item, index: i}),
+          )}
       </View>
     </View>
   );
 };
 
-export default memo(EpisodesSheet)
+export default memo(EpisodesSheet);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     gap: 5,
     paddingHorizontal: 5,
-    // backgroundColor:"red"
+  },
+  epHeadingContainer: {
+    paddingHorizontal: 5,
+    borderColor: color.LighterGray,
+    borderWidth: 0.4,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  epCardContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    gap: 7,
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    borderColor: color.LighterGray,
+    borderWidth: 0.4,
+    paddingVertical: 5,
   },
   rowTextStyle: {
     fontSize: 14,
@@ -238,8 +242,6 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   buttonStyle: {
-    // width: 150,
-    // height: 20,
     padding: 10,
     backgroundColor: color.DarkBackGround,
   },

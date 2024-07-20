@@ -61,23 +61,19 @@ const UpcomingList = ({navigation, route}) => {
     queryKey: ['upcoming', page, type, refreshing],
     queryFn: () => fetchUpcoming({type: type, page: page}),
   });
-  const memoizedList = useMemo(()=>{
-    if(type === tags[0].id){
-      return data?.tv_series
+  const memoizedList = useMemo(() => {
+    if (type === tags[0].id) {
+      return data?.tv_series;
+    } else if (type === tags[1].id) {
+      return data?.special;
+    } else if (type === tags[2].id) {
+      return data?.movies;
+    } else if (type === tags[3].id) {
+      return data?.ova;
+    } else if (type === tags[4].id) {
+      return data?.ona;
     }
-    else if(type === tags[1].id){
-      return data?.special
-    }
-    else if(type === tags[2].id){
-      return data?.movies
-    }
-    else if(type === tags[3].id){
-      return data?.ova
-    }
-    else if(type === tags[4].id){
-      return data?.ona
-    }
-  },[type, data,isLoading])
+  }, [type, data, isLoading]);
 
   const renderItem = useCallback(
     ({item, i}) => {
@@ -97,14 +93,13 @@ const UpcomingList = ({navigation, route}) => {
         </TouchableOpacity>
       );
     },
-    [isLoading,type, memoizedList],
+    [isLoading, type, memoizedList],
   );
   const onSelectDropDown = useCallback((selectedItem, index) => {
     // console.log(selectedItem);
     navigation.navigate('UpcomingList', {
-        type: selectedItem.id,
-    })
-
+      type: selectedItem.id,
+    });
   }, []);
 
   const buttonTextAfterSelection = useCallback(
@@ -151,7 +146,7 @@ const UpcomingList = ({navigation, route}) => {
     );
   }, [data?.pages]);
   if (error) {
-    Alert.alert('error', error);
+    Alert.alert('error', error?.message);
   }
 
   return (
@@ -184,7 +179,7 @@ const UpcomingList = ({navigation, route}) => {
       <FlatList
         horizontal={false}
         numColumns={2}
-        data={memoizedList}
+        data={memoizedList?.sort((a, b) => a?.index - b?.index)}
         keyExtractor={(item, i) => `${item?.animeID || item?.animeId || i}`}
         renderItem={renderItem}
         refreshControl={

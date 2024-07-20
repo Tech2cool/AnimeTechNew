@@ -1,7 +1,7 @@
+/* eslint-disable react-native/no-inline-styles */
 import {StyleSheet, Text, View} from 'react-native';
 import React, {memo, useMemo} from 'react';
 import FastImage from 'react-native-fast-image';
-import {stripHtmlTags} from '../utils/HelperFunctions';
 import Theme from '../utils/Theme';
 import {useSettingControl} from '../context/SettingsControlContext';
 const color = Theme.DARK;
@@ -11,7 +11,7 @@ const VerticalCard = ({
   width = undefined,
   height = undefined,
   moreheight = false,
-  showEpisode= false,
+  showEpisode = false,
 }) => {
   const {setting} = useSettingControl();
 
@@ -29,7 +29,14 @@ const VerticalCard = ({
     } else if (item?.poster) {
       return item?.poster;
     }
-  }, [item?.animeImg, item?.poster]);
+  }, [
+    item?.animeImg,
+    item?.poster,
+    item?.AdditionalInfo?.posterImage?.large,
+    item?.AdditionalInfo?.posterImage?.medium,
+    item?.AdditionalInfo?.posterImage?.original,
+    item?.anilist?.coverImage?.large,
+  ]);
 
   const memoizedTitle = useMemo(() => {
     if (setting.language === 'en') {
@@ -39,19 +46,15 @@ const VerticalCard = ({
         return item?.animeTitle?.english_jp;
       } else if (item?.name) {
         return item?.name;
-      }
-      else if (item?.jname) {
+      } else if (item?.jname) {
         return item?.jname;
       }
-
     } else {
       if (item?.animeTitle?.english_jp) {
         return item?.animeTitle?.english_jp;
-      } 
-      else if (item?.jname) {
+      } else if (item?.jname) {
         return item?.jname;
-      }
-      else if (item?.animeTitle?.english) {
+      } else if (item?.animeTitle?.english) {
         return item?.animeTitle?.english;
       } else if (item?.name) {
         return item?.name;
@@ -60,32 +63,38 @@ const VerticalCard = ({
   }, [
     item?.animeTitle?.english,
     item?.animeTitle?.english_jp,
-    setting.language,
+    setting?.language,
     item?.name,
+    item?.jname,
   ]);
 
-  const memoizedDesc = useMemo(() => {
-    if (item?.AdditionalInfo?.synopsis) {
-      return stripHtmlTags(item?.AdditionalInfo?.synopsis);
-    } else if (item?.AdditionalInfo?.description) {
-      return stripHtmlTags(item?.AdditionalInfo?.description);
-    } else if (item?.anilist?.description) {
-      return stripHtmlTags(item?.anilist?.description);
-    }
-  }, []);
-
   const memoizedEpisodeNum = useMemo(() => {
-    if(showEpisode || item?.episodeNum){
+    if (showEpisode || item?.episodeNum) {
       if (item?.episodeNum) {
-        return 'Episode ' + item?.episodeNum;
+        return (
+          <Text numberOfLines={1} style={styles.episodeText}>
+            Episode {item?.episodeNum}
+          </Text>
+        );
       } else if (item?.number) {
-        return 'Episode ' + item?.number;
+        return (
+          <Text numberOfLines={1} style={styles.episodeText}>
+            Episode {item?.number}
+          </Text>
+        );
       } else if (item?.episodes?.sub) {
-        return 'Episode ' + item?.episodes?.sub;
+        return (
+          <Text numberOfLines={1} style={styles.episodeText}>
+            Episode {item?.episodes?.sub}
+          </Text>
+        );
       } else if (item?.episodes?.dub) {
-        return 'Episode ' + item?.episodes?.dub;
+        return (
+          <Text numberOfLines={1} style={styles.episodeText}>
+            Episode {item?.episodes?.dub}
+          </Text>
+        );
       }
-  
     }
   }, [
     item?.episodeNum,
@@ -97,11 +106,23 @@ const VerticalCard = ({
 
   const memoizedYear = useMemo(() => {
     if (item?.year) {
-      return 'Released: ' + item?.year;
+      return (
+        <Text numberOfLines={1} style={styles.episodeText}>
+          Released: {item?.year}
+        </Text>
+      );
     } else if (item?.releasedDate) {
-      return 'Released: ' + item?.releasedDate;
+      return (
+        <Text numberOfLines={1} style={styles.episodeText}>
+          Released: {item?.releasedDate}
+        </Text>
+      );
     } else if (item?.released) {
-      return 'Released: ' + item?.released;
+      return (
+        <Text numberOfLines={1} style={styles.episodeText}>
+          Released: {item?.released}
+        </Text>
+      );
     }
   }, [item?.year, item?.releasedDate, item?.released]);
 
@@ -111,7 +132,24 @@ const VerticalCard = ({
     } else if (item?.isDub === false) {
       return 'Sub';
     }
+    return null;
   }, [item?.isDub]);
+
+  const memoizedStatus = useMemo(() => {
+    if (item?.status === 'RELEASING') {
+      return (
+        <Text style={[styles.episodeText, {textTransform: 'capitalize'}]}>
+          Status: Ongoing
+        </Text>
+      );
+    } else if (item?.status) {
+      return (
+        <Text style={[styles.episodeText, {textTransform: 'capitalize'}]}>
+          Status: {item?.status}
+        </Text>
+      );
+    }
+  }, [item?.status]);
 
   const memoizedWaitingStatus = useMemo(() => {
     if (item?.req_status) {
@@ -133,6 +171,7 @@ const VerticalCard = ({
             {
               borderColor: color.Orange,
               color: color.Orange,
+              paddingHorizontal: 10,
             },
           ]}>
           {item?.type}
@@ -177,7 +216,6 @@ const VerticalCard = ({
     }
   }, [item?.rank]);
 
-
   return (
     <View
       style={{
@@ -192,84 +230,87 @@ const VerticalCard = ({
       }}>
       <FastImage source={{uri: memoizedPoster}} style={{flex: 1}} />
       <View style={[styles.overlay, {height: moreheight ? '40%' : '30%'}]}>
-        <Text numberOfLines={moreheight ? 4 : 2} style={styles.titleText}>
+        <Text numberOfLines={moreheight ? 3 : 2} style={styles.titleText}>
           {memoizedTitle}
         </Text>
-        <Text numberOfLines={1} style={styles.episodeText}>
-          {memoizedEpisodeNum}
-          {memoizedYear}
-        </Text>
+        {memoizedEpisodeNum}
+        {memoizedYear}
+        {memoizedStatus}
       </View>
       <View
         style={{
           position: 'absolute',
           top: 2,
-          right: 2,
-          borderColor: color.Orange,
-          borderWidth: 1,
-          backgroundColor: 'rgba(0,0,0,0.4)',
-          padding: 5,
-          borderRadius: 10,
-          opacity: item?.isDub !== undefined ? 1 : 0,
+          right: 0,
+          left: 0,
+          flex: 1,
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: 5,
         }}>
-        <Text style={styles.episodeText}>{memoizedDub}</Text>
-      </View>
-      <View
-        style={{
-          position: 'absolute',
-          top: 2,
-          right: 2,
-          backgroundColor: 'rgba(0,0,0,0.4)',
-          borderRadius: 10,
-          alignItems: 'center',
-          justifyContent: 'center',
-          opacity:item?.type !== undefined ? 1:0
-        }}>
-        {memoizedType}
-      </View>
+        <View
+          style={{
+            borderColor: color.Orange,
+            borderWidth: 1,
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            borderRadius: 10,
+            display: item?.rating !== undefined ? 'block' : 'none',
+          }}>
+          {memoizedRating}
+        </View>
 
-      <View
-        style={{
-          position: 'absolute',
-          top: 2,
-          right: 2,
-          backgroundColor: 'rgba(0,0,0,0.4)',
-          borderRadius: 10,
-          alignItems: 'center',
-          justifyContent: 'center',
-          opacity:item?.req_status !== undefined ? 1:0
-        }}>
-        {memoizedWaitingStatus}
-      </View>
+        <View
+          style={{
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            borderRadius: 10,
+            display: item?.isDub !== undefined ? 'block' : 'none',
+          }}>
+          <Text
+            style={[
+              styles.cardText,
+              {
+                borderColor: color.Orange,
+                color: color.Orange,
+                paddingHorizontal: 10,
+              },
+            ]}>
+            {memoizedDub}
+          </Text>
+        </View>
 
-      <View
-        style={{
-          position: 'absolute',
-          top: 2,
-          left: 2,
-          backgroundColor: 'rgba(0,0,0,0.4)',
-          borderRadius: 10,
-          alignItems: 'center',
-          justifyContent: 'center',
-          opacity:item?.rating !== undefined ? 1:0
-        }}>
-        {memoizedRating}
-      </View>
+        <View
+          style={{
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            borderRadius: 10,
+            alignItems: 'center',
+            justifyContent: 'center',
+            display: item?.type !== undefined ? 'block' : 'none',
+          }}>
+          {memoizedType}
+        </View>
 
-      <View
-        style={{
-          position: 'absolute',
-          top: 2,
-          left: 2,
-          backgroundColor: 'rgba(0,0,0,0.4)',
-          borderRadius: 10,
-          alignItems: 'center',
-          justifyContent: 'center',
-          opacity:item?.rank !== undefined ? 1:0
-        }}>
-        {memoizedRank}
-      </View>
+        <View
+          style={{
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            borderRadius: 10,
+            alignItems: 'center',
+            justifyContent: 'center',
+            display: item?.req_status !== undefined ? 'block' : 'none',
+          }}>
+          {memoizedWaitingStatus}
+        </View>
 
+        <View
+          style={{
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            borderRadius: 10,
+            alignItems: 'center',
+            justifyContent: 'center',
+            display: item?.rank !== undefined ? 'block' : 'none',
+          }}>
+          {memoizedRank}
+        </View>
+      </View>
     </View>
   );
 };
@@ -286,6 +327,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.7)',
     paddingHorizontal: 4,
     paddingVertical: 4,
+    gap: 2,
   },
   titleText: {
     fontFamily: font.OpenSansMedium,

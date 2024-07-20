@@ -59,7 +59,7 @@ const UpcomingAnimes = ({refreshing, list, isLoading, error}) => {
   }
 
   if (error) {
-    Alert.alert('error', error);
+    Alert.alert('error', error?.message);
   }
 
   return (
@@ -80,7 +80,7 @@ const UpcomingAnimes = ({refreshing, list, isLoading, error}) => {
       </View>
       <FlatList
         horizontal={true}
-        data={list?.tv_series}
+        data={list?.tv_series?.sort((a, b) => a?.index - b?.index)}
         keyExtractor={(item, index) => `${item.animeID || item.animeId}`}
         renderItem={renderItem}
         contentContainerStyle={{gap: 10}}
@@ -102,7 +102,7 @@ const UpcomingAnimes = ({refreshing, list, isLoading, error}) => {
       </View>
       <FlatList
         horizontal={true}
-        data={list?.special}
+        data={list?.special?.sort((a, b) => a?.index - b?.index)}
         keyExtractor={(item, index) => `${item.animeID || item.animeId}`}
         renderItem={renderItem}
         contentContainerStyle={{gap: 10}}
@@ -124,7 +124,7 @@ const UpcomingAnimes = ({refreshing, list, isLoading, error}) => {
       </View>
       <FlatList
         horizontal={true}
-        data={list?.movies}
+        data={list?.movies?.sort((a, b) => a?.index - b?.index)}
         keyExtractor={(item, index) => `${item.animeID || item.animeId}`}
         renderItem={renderItem}
         contentContainerStyle={{gap: 10}}
@@ -145,7 +145,7 @@ const UpcomingAnimes = ({refreshing, list, isLoading, error}) => {
       </View>
       <FlatList
         horizontal={true}
-        data={list?.ova}
+        data={list?.ova?.sort((a, b) => a?.index - b?.index)}
         keyExtractor={(item, index) => `${item.animeID || item.animeId}`}
         renderItem={renderItem}
         contentContainerStyle={{gap: 10}}
@@ -167,7 +167,7 @@ const UpcomingAnimes = ({refreshing, list, isLoading, error}) => {
       </View>
       <FlatList
         horizontal={true}
-        data={list?.ona}
+        data={list?.ona?.sort((a, b) => a?.index - b?.index)}
         keyExtractor={(item, index) => `${item.animeID || item.animeId}`}
         renderItem={renderItem}
         contentContainerStyle={{gap: 10}}

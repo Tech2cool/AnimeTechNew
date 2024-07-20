@@ -11,7 +11,7 @@ import React, {memo, useCallback} from 'react';
 import Theme from '../../../../../../utils/Theme';
 
 import VerticalCard from '../../../../../../components/VerticalCard';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 const {width, height} = Dimensions.get('window');
 const color = Theme.DARK;
 const font = Theme.FONTS;
@@ -24,18 +24,24 @@ const SeasonalList = ({refreshing, data, isLoading, error}) => {
     });
   };
   const onPressSeeAll = () => {
-    navigation.navigate('SeasonRelease',{
-      season:"spring-2024-anime",
+    navigation.navigate('SeasonRelease', {
+      season: 'spring-2024-anime',
     });
   };
 
-  const renderItem = useCallback(({item, i}) => {
-    return (
-      <TouchableOpacity style={styles.slider} activeOpacity={0.8} onPress={()=> onPressAnime(item)}>
-        <VerticalCard item={item} />
-      </TouchableOpacity>
-    );
-  }, [refreshing]);
+  const renderItem = useCallback(
+    ({item, i}) => {
+      return (
+        <TouchableOpacity
+          style={styles.slider}
+          activeOpacity={0.8}
+          onPress={() => onPressAnime(item)}>
+          <VerticalCard item={item} />
+        </TouchableOpacity>
+      );
+    },
+    [refreshing],
+  );
 
   if (isLoading) {
     return (
@@ -55,7 +61,7 @@ const SeasonalList = ({refreshing, data, isLoading, error}) => {
   }
 
   if (error) {
-    Alert.alert('error', error);
+    Alert.alert('error', error?.message);
   }
 
   return (
@@ -71,12 +77,12 @@ const SeasonalList = ({refreshing, data, isLoading, error}) => {
           {data?.title}
         </Text>
         <TouchableOpacity onPress={onPressSeeAll}>
-        <Text style={[styles.titleText]}>See all</Text>
+          <Text style={[styles.titleText]}>See all</Text>
         </TouchableOpacity>
       </View>
       <FlatList
         horizontal={true}
-        data={data?.list}
+        data={data?.list?.sort((a, b) => a?.index - b?.index)}
         keyExtractor={(item, index) => `${item.animeID}`}
         renderItem={renderItem}
         contentContainerStyle={{gap: 10}}
@@ -85,7 +91,7 @@ const SeasonalList = ({refreshing, data, isLoading, error}) => {
   );
 };
 
-export default SeasonalList
+export default SeasonalList;
 
 const styles = StyleSheet.create({
   container: {

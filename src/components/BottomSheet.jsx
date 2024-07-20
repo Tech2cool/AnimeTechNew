@@ -34,6 +34,7 @@ const BottomSheet = props => {
     endPoint,
     snapPoint,
     onEnd,
+    containerStyle,
   } = props;
   const {videoState, setVideoState} = useVideoState();
 
@@ -44,7 +45,7 @@ const BottomSheet = props => {
     : SCREEN_HIEGHT * max_Trans_Y;
   const MAX_HEIGHT = videoState.fullscreen
     ? width - MAX_TRANSLATE_Y - 20
-    : SCREEN_HIEGHT - MAX_TRANSLATE_Y - 10;
+    : SCREEN_HIEGHT - MAX_TRANSLATE_Y;
   const BORDER_RADIUS = borderRadius;
   const END_POINT = videoState.fullscreen
     ? width * endPoint
@@ -126,6 +127,7 @@ const BottomSheet = props => {
                   height: '100%',
                   paddingTop: 20,
                   borderRadius: borderRadius,
+                  ...containerStyle,
                 },
               ]}>
               <>{children}</>
@@ -146,6 +148,7 @@ const BottomSheet = props => {
                   height: MAX_HEIGHT,
                   borderRadius: BORDER_RADIUS,
                   overflow: 'hidden',
+                  ...containerStyle,
                 },
               ]}>
               <GestureDetector gesture={panGesture}>
@@ -177,7 +180,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    // backgroundColor: 'rgba(0,0,0,0.3)',
     alignItems: 'center',
     paddingBottom: 10,
   },
@@ -190,6 +193,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: 'rgba(0,0,0,0.3)',
     alignItems: 'center',
+    margin: 0,
+
     // paddingBottom:10,
   },
 

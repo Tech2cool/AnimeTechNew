@@ -44,7 +44,7 @@ const MyList = ({navigation, route}) => {
       // console.log(items)
       return items;
     } catch (error) {
-      Alert.alert('error', error);
+      Alert.alert('error', error?.message);
     }
   };
   const SQLLiteQueryDelte = async () => {
@@ -53,7 +53,7 @@ const MyList = ({navigation, route}) => {
       const items = await deleteTable(db);
       return items;
     } catch (error) {
-      Alert.alert('error', error);
+      Alert.alert('error', error?.message);
     }
   };
 
@@ -66,7 +66,7 @@ const MyList = ({navigation, route}) => {
     });
   };
   if (error) {
-    Alert.alert('error', error);
+    Alert.alert('error', error?.message);
   }
 
   return (
@@ -85,23 +85,36 @@ const MyList = ({navigation, route}) => {
         <TouchableOpacity onPress={SQLLiteQueryDelte}>
           <Text style={styles.textDelete}>Delete List</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={()=>setModal(!modal)}>
+        <TouchableOpacity onPress={() => setModal(!modal)}>
           <IIcon name="options-outline" size={32} color={color.White} />
         </TouchableOpacity>
       </View>
-      {
-       isLoading && <ActivityIndicator color={'red'} size={30} style={{alignSelf: 'center'}} /> 
-      }
+      {isLoading && (
+        <ActivityIndicator
+          color={'red'}
+          size={30}
+          style={{alignSelf: 'center'}}
+        />
+      )}
       <View style={{flex: 1, paddingBottom: 30}}>
         {data
           ?.sort((a, b) => b?.timestamp - a?.timestamp)
           ?.map((item, index) => (
-            <TouchableOpacity key={item.id} onPress={() => gotoVideo(item)} activeOpacity={0.8}>
+            <TouchableOpacity
+              key={item.id}
+              onPress={() => gotoVideo(item)}
+              activeOpacity={0.8}>
               <HorizontalCard item={item} />
             </TouchableOpacity>
           ))}
       </View>
-      <ImportExportModule modal={modal} setModal={setModal} list={list} setList={setList} onRefresh={onRefresh}/>
+      <ImportExportModule
+        modal={modal}
+        setModal={setModal}
+        list={list}
+        setList={setList}
+        onRefresh={onRefresh}
+      />
     </ScrollView>
   );
 };

@@ -108,7 +108,7 @@ const RequestedList = ({navigation, route}) => {
     );
   }, [data?.pages]);
   if (error) {
-    Alert.alert('error', error);
+    Alert.alert('error', error?.message);
   }
 
   return (
@@ -124,7 +124,7 @@ const RequestedList = ({navigation, route}) => {
       <FlatList
         horizontal={false}
         numColumns={2}
-        data={data?.list}
+        data={data?.list?.sort((a, b) => a?.index - b?.index)}
         keyExtractor={(item, i) => `${item?.animeID || item?.animeId || i}`}
         renderItem={renderItem}
         refreshControl={

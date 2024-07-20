@@ -1,19 +1,29 @@
-import {Alert, Dimensions, Modal, Share, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+/* eslint-disable react-native/no-inline-styles */
+import {
+  Alert,
+  Dimensions,
+  Modal,
+  Share,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useQuery} from '@tanstack/react-query';
 import Theme from '../utils/Theme';
 import FastImage from 'react-native-fast-image';
-import Animated, { FadeIn, FadeInUp } from 'react-native-reanimated';
-import { useNavigation } from '@react-navigation/native';
+import Animated, {FadeIn, FadeInUp} from 'react-native-reanimated';
+import {useNavigation} from '@react-navigation/native';
 import VersionInfo from 'react-native-version-info';
-import { fetchVersion } from '../Query/v1';
+import {fetchVersion} from '../Query/v1';
 
 const color = Theme.DARK;
 const font = Theme.FONTS;
 const {width, height} = Dimensions.get('window');
 
 const VersionChecker = () => {
-    const navigation = useNavigation()
+  const navigation = useNavigation();
   const [isOldVersion, setIsOldVersion] = useState({
     isOld: false,
     result: {},
@@ -110,7 +120,7 @@ const VersionChecker = () => {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <View style={{gap: 10}}>
+          <View style={{gap: 10, flex: 1}}>
             <Text
               style={{
                 fontFamily: font.OpenSansBold,
@@ -149,10 +159,10 @@ const VersionChecker = () => {
             </Text>
             <Text
               style={{
-                fontFamily: font.OpenSansBold,
+                fontFamily: font.OpenSansMedium,
                 textAlign: 'center',
                 color: color.White,
-                fontSize: 16,
+                fontSize: 14,
               }}>
               {isOldVersion.result?.desc || '1) Fixes'}
             </Text>

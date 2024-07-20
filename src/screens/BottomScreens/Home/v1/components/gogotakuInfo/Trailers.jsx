@@ -152,7 +152,7 @@ const Trailers = ({refreshing, list, isLoading, error}) => {
   }
 
   if (error) {
-    Alert.alert('error', error);
+    Alert.alert('error', error?.message);
   }
 
   return (
@@ -161,7 +161,7 @@ const Trailers = ({refreshing, list, isLoading, error}) => {
       <FlatList
         ref={flatListRef}
         horizontal={true}
-        data={list}
+        data={list?.sort((a, b) => a?.index - b?.index)}
         keyExtractor={(item, index) => `${item.id}`}
         renderItem={renderItem}
         getItemLayout={getItemLayout}

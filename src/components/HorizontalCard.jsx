@@ -2,7 +2,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import React, {useMemo} from 'react';
 import FastImage from 'react-native-fast-image';
 import Theme from '../utils/Theme';
-import { useSettingControl } from '../context/SettingsControlContext';
+import {useSettingControl} from '../context/SettingsControlContext';
 
 const color = Theme.DARK;
 const font = Theme.FONTS;
@@ -49,7 +49,7 @@ const HorizontalCard = ({item}) => {
     }
   }, [item?.episodeIdGogo]);
 
-  const memoizedAniwatchId= useMemo(() => {
+  const memoizedAniwatchId = useMemo(() => {
     if (item?.episodeIdAniwatch) {
       return (
         <Text numberOfLines={1} style={styles.cardText}>
@@ -59,16 +59,25 @@ const HorizontalCard = ({item}) => {
     }
   }, [item?.episodeIdAniwatch]);
 
-  const memoizedAnilistId= useMemo(() => {
+  const memoizedAnilistId = useMemo(() => {
     if (item?.episodeIdAnilist) {
       return (
         <Text numberOfLines={1} style={styles.cardText}>
-          Aniwatch
+          AniList
         </Text>
       );
     }
   }, [item?.memoizedAnilistId]);
 
+  const memoizedWatchTime = useMemo(() => {
+    const time = Math.floor(
+      (parseInt(item?.currentTime) / parseInt(item?.duration)) * 100,
+    );
+    if (isNaN(item?.currentTime) || isNaN(item?.duration) || isNaN(time)) {
+      return 'Watched(0%)';
+    }
+    return `Watched(${time})%`;
+  }, [item?.currentTime, item?.duration]);
   return (
     <View
       style={{
@@ -86,12 +95,11 @@ const HorizontalCard = ({item}) => {
           resizeMode={FastImage.resizeMode.cover}
         />
       </View>
-      <View style={{flex:1}}>
-        <View style={{flexDirection: 'row', gap: 10, paddingVertical:5}}>
-        {memoizedGogoId}
-        {memoizedAniwatchId}
-        {memoizedAnilistId}
-
+      <View style={{flex: 1}}>
+        <View style={{flexDirection: 'row', gap: 10, paddingVertical: 5}}>
+          {memoizedGogoId}
+          {memoizedAniwatchId}
+          {memoizedAnilistId}
         </View>
         <Text numberOfLines={2} style={styles.titleText}>
           {memoizedTitle}
@@ -103,7 +111,7 @@ const HorizontalCard = ({item}) => {
           <Text
             numberOfLines={1}
             style={[styles.episodeText, {color: color.AccentGreen}]}>
-            Watched({Math.floor((item?.currentTime / item?.duration) * 100)}%)
+            {memoizedWatchTime}
           </Text>
         </View>
       </View>

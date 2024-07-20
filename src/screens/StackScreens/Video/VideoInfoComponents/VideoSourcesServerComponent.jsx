@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {
   ScrollView,
   StyleSheet,
@@ -5,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { memo } from 'react';
+import React, {memo} from 'react';
 import Theme from '../../../../utils/Theme';
 const color = Theme.DARK;
 const font = Theme.FONTS;
@@ -27,7 +28,11 @@ const VideoSourcesServerComponent = ({
   setServer,
   serverList = [],
 }) => {
-  const list = serverList.length ? serverList : defaultSv;
+  const list = defaultSv;
+  const sv2Available =
+    serverList?.length && serverList?.find(item => item.name === 'streamwish')
+      ? true
+      : false;
   return (
     <View
       horizontal={true}
@@ -35,7 +40,7 @@ const VideoSourcesServerComponent = ({
         flexDirection: 'row',
         gap: 5,
         borderColor: color.LighterGray,
-        borderWidth: 1,
+        borderWidth: 0.4,
         padding: 5,
         margin: 4,
         alignItems: 'center',
@@ -44,21 +49,21 @@ const VideoSourcesServerComponent = ({
         Server:{' '}
       </Text>
 
-      {list.map(item => (
+      {list?.map(item => (
         <TouchableOpacity
-          onPress={() => setServer(item.server)}
-          key={item.id || item.server}
+          onPress={() => setServer(item?.server)}
+          key={item?.id || item?.server}
           style={{
-            backgroundColor:
-              server === item.server ? color.Orange : undefined,
+            backgroundColor: server === item?.server ? color.Orange : undefined,
             borderColor: color.Orange,
             borderWidth: 1,
-            padding: 5,
+            paddingVertical: 4,
+            paddingHorizontal: 5,
             borderRadius: 10,
             flex: 0,
             alignSelf: 'flex-start',
           }}>
-          <Text style={{color: color.White}}>{item.name}</Text>
+          <Text style={{color: color.White}}>{item?.name}</Text>
         </TouchableOpacity>
       ))}
     </View>

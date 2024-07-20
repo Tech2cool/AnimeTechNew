@@ -24,13 +24,13 @@ import LinearGradient from 'react-native-linear-gradient';
 import {fetchPopular} from '../../../../../Query/v1';
 import {MCIcon} from '../../../../../utils/contstant';
 import {useNavigation} from '@react-navigation/native';
-import { useSettingControl } from '../../../../../context/SettingsControlContext';
+import {useSettingControl} from '../../../../../context/SettingsControlContext';
 const {width, height} = Dimensions.get('window');
 const color = Theme.DARK;
 const font = Theme.FONTS;
 const SmallImageSlider = ({refreshing}) => {
   const navigation = useNavigation();
-  const {setting}= useSettingControl()
+  const {setting} = useSettingControl();
   const flatListRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -52,7 +52,7 @@ const SmallImageSlider = ({refreshing}) => {
       return item.animeImg;
     }
   }, []);
-  
+
   const memoizedTitle = useCallback(item => {
     if (setting.language === 'en') {
       if (item?.animeTitle?.english) {
@@ -78,67 +78,74 @@ const SmallImageSlider = ({refreshing}) => {
       return stripHtmlTags(item?.anilist?.description);
     }
   }, []);
-  const getItemLayout =(data, index) => ({
-      length: width,
-      offset: width * index,
-      index,
-    })
+  const getItemLayout = (data, index) => ({
+    length: width,
+    offset: width * index,
+    index,
+  });
 
   const onPressAnime = item => {
     navigation.navigate('anime-info', {
       id: item.animeId || item.animeID,
     });
   };
-  const renderItem = useCallback(({item, i}) => {
-    return (
-      <TouchableOpacity
-        style={styles.slider}
-        activeOpacity={0.8}
-        onPress={() => onPressAnime(item)}>
-        <FastImage
-          source={{uri: memoizedPoster(item)}}
-          style={{flex: 1}}
-          resizeMode={FastImage.resizeMode.cover}
-        />
-        <View style={styles.overlay}>
-          <LinearGradient
-            colors={['transparent', color.DarkBackGround]}
-            style={{paddingBottom: 10, gap: 5, paddingHorizontal:5}}>
-            <Text numberOfLines={2} style={styles.titleText}>
-              {memoizedTitle(item)}
-            </Text>
-            {/* <Text numberOfLines={3} style={styles.descText}>
+  const renderItem = useCallback(
+    ({item, i}) => {
+      return (
+        <TouchableOpacity
+          style={styles.slider}
+          activeOpacity={0.8}
+          onPress={() => onPressAnime(item)}>
+          <FastImage
+            source={{uri: memoizedPoster(item)}}
+            style={{flex: 1}}
+            resizeMode={FastImage.resizeMode.cover}
+          />
+          <View style={styles.overlay}>
+            <LinearGradient
+              colors={['transparent', color.DarkBackGround]}
+              style={{paddingBottom: 10, gap: 5, paddingHorizontal: 5}}>
+              <Text numberOfLines={2} style={styles.titleText}>
+                {memoizedTitle(item)}
+              </Text>
+              {/* <Text numberOfLines={3} style={styles.descText}>
               {memoizedDesc(item)}
             </Text> */}
-            <View
-              style={{
-                flexDirection: 'row',
-                gap: 5,
-                flexWrap: 'wrap',
-                alignItems: 'center',
-              }}>
-              {item?.genres?.map(genre => (
-                <View
-                  key={genre}
-                  style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
-                  <MCIcon
-                    name="star-three-points-outline"
-                    color={color.White}
-                    size={12}
-                  />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  gap: 5,
+                  flexWrap: 'wrap',
+                  alignItems: 'center',
+                }}>
+                {item?.genres?.map(genre => (
+                  <View
+                    key={genre}
+                    style={{
+                      flexDirection: 'row',
+                      gap: 5,
+                      alignItems: 'center',
+                    }}>
+                    <MCIcon
+                      name="star-three-points-outline"
+                      color={color.White}
+                      size={12}
+                    />
 
-                  <Text numberOfLines={3} style={styles.descText}>
-                    {genre}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          </LinearGradient>
-        </View>
-      </TouchableOpacity>
-    );
-  }, [refreshing,isLoading]);
-  
+                    <Text numberOfLines={3} style={styles.descText}>
+                      {genre}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </LinearGradient>
+          </View>
+        </TouchableOpacity>
+      );
+    },
+    [refreshing, isLoading],
+  );
+
   useEffect(() => {
     // setInterval Bugs sometime in android
     if (currentIndex >= 0 && data?.list?.length > 0) {
@@ -157,16 +164,16 @@ const SmallImageSlider = ({refreshing}) => {
     return (
       <View
         style={{
-          aspectRatio: (16 / 6),
+          aspectRatio: 16 / 6,
           width: width,
           backgroundColor: color.LighterGray,
-          marginVertical:10,
+          marginVertical: 10,
         }}></View>
     );
   }
 
   if (error) {
-    Alert.alert('error', error);
+    Alert.alert('error', error?.message);
   }
 
   return (
@@ -174,7 +181,7 @@ const SmallImageSlider = ({refreshing}) => {
       <FlatList
         ref={flatListRef}
         horizontal={true}
-        data={data?.list}
+        data={data?.list?.sort((a, b) => a?.index - b?.index)}
         keyExtractor={(item, index) => `${item.animeID || item.animeId}`}
         renderItem={renderItem}
         getItemLayout={getItemLayout}
@@ -183,11 +190,11 @@ const SmallImageSlider = ({refreshing}) => {
   );
 };
 
-export default SmallImageSlider
+export default SmallImageSlider;
 
 const styles = StyleSheet.create({
   slider: {
-    aspectRatio: (16 / 6),
+    aspectRatio: 16 / 6,
     width: width,
     position: 'relative',
   },
