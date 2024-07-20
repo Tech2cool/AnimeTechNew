@@ -41,52 +41,38 @@ yarn add
 yarn start
 ```
 ### Demo Screeshots
-### Home 
-![AnimeTech Android Demo](./readme-utils/home.jpg "Home")
-### Video 
-![AnimeTech Android Demo](./readme-utils/video.jpg "Video")
-
-### Search 
-![AnimeTech Android Demo](./readme-utils/search.jpg "Search")
-
-### Anime Info 
-![AnimeTech Android Demo](./readme-utils/info.jpg "Info")
-
-### APP SplashScreen 
-![AnimeTech Android Demo](./readme-utils/splashScreen.jpg "Splashscreen")
-
-
-### Watchlist 
-![AnimeTech Android Demo](./readme-utils/watchlist.jpg "Watchlist")
-
-
-https://github.com/Tech2cool/animetech-files/main/home-info.gif
-### SplashScreen 
 <div>
+
+### SplashScreen 
    <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/splash-gif.gif" height="500" width="350" align="right">
 </div>
 
-### HomeScreen
 <div>
+
+### HomeScreen
    <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/home-info.gif" height="760" width="350" align="right">
 </div>
 
-### VideoScreen 
 <div>
+
+### VideoScreen 
    <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/video-info.gif" height="760" width="350" align="right">
 </div>
 
-### SearchScreen 
 <div>
+
+### SearchScreen 
    <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/search-info.gif" height="760" width="350" align="right">
 </div>
 
-### MyListScreen 
 <div>
+
+### MyListScreen 
    <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/mylist-info.gif" height="760" width="350" align="right">
 </div>
 
-### Random Animes Screen
 <div>
+
+### Random Animes Screen
    <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/random-info.gif" height="760" width="350" align="right">
 </div>
