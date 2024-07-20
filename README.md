@@ -43,32 +43,37 @@ yarn start
 ### Demo Screeshots
 
 <div>
+<span >
 <h2>⭐ SplashScreen ⭐</h2>
+<h2>⭐ HomeScreen ⭐</h2>
+</span>
    <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/splash-gif.gif" height="650" width="350" align="right">
 </div>
 
 <div>
-<h2>⭐ HomeScreen ⭐</h2>
    <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/home-info.gif" height="650" width="350" align="right">
 </div>
 <br>
-<div>
+
+<span >
 <h2>⭐ VideoScreen ⭐</h2>
+<h2>⭐ SearchScreen ⭐</h2>
+</span>
+<div>
    <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/video-info.gif" height="650" width="350" align="right">
 </div>
-
 <div>
-<h2>⭐ SearchScreen ⭐</h2>
    <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/search-info.gif" height="650" width="350" align="right">
 </div>
 <br>
 
-<div>
+<span >
 <h2>⭐ MyListScreen ⭐</h2>
+<h2>⭐ Random Animes Screen ⭐</h2>
+</span>
+<div>
    <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/mylist-info.gif" height="650" width="350" align="right">
 </div>
 <div>
-<h2>⭐ Random Animes Screen ⭐</h2>
-   
    <img src="https://raw.githubusercontent.com/Tech2cool/animetech-files/main/random-info.gif" height="650" width="350" align="right">
 </div>
